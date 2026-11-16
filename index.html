@@ -455,8 +455,8 @@
         question: "Quelle règle s'applique entre le cartouche de titre et les sous-titres au début de la vidéo ?",
         options: [
           { text: "On affiche toujours les sous-titres par-dessus le cartouche de titre", isCorrect: false },
-          { text: "On évite autant que possible d'afficher des sous-titres en même temps que le titre, qui a la priorité", isCorrect: true },
-          { text: "Les sous-titres remplacent le titre dès la 2e seconde", isCorrect: false }
+          { text: "Les sous-titres remplacent le titre dès la 2e seconde", isCorrect: false },
+          { text: "On évite autant que possible d'afficher des sous-titres en même temps que le titre, qui a la priorité", isCorrect: true }
         ],
         explanation: "Pour ne pas surcharger l'écran dès l'accroche, le titre a la priorité en début de vidéo."
       },
@@ -473,16 +473,16 @@
         question: "De combien la taille des sous-titres a-t-elle été augmentée pour améliorer la lisibilité sur mobile ?",
         options: [
           { text: "+ 5 %", isCorrect: false },
-          { text: "+ 16 % (avec un ombrage revu sans halo noir distrayant)", isCorrect: true },
-          { text: "+ 40 %", isCorrect: false }
+          { text: "+ 40 %", isCorrect: false },
+          { text: "+ 16 % (avec un ombrage revu sans halo noir distrayant)", isCorrect: true }
         ],
         explanation: "Le texte est 16 % plus grand et son ombrage a été affiné pour garantir un bon contraste sans créer de halo noir parasite."
       },
       {
         question: "Pourquoi les 5 premières secondes sont-elles jugées décisives sur les réseaux sociaux ?",
         options: [
-          { text: "En moyenne, seuls 35 % des internautes regardent encore la vidéo au bout de 5 secondes (et 4 % jusqu'au bout)", isCorrect: true },
           { text: "Parce que les algorithmes coupent automatiquement le son après 5 secondes", isCorrect: false },
+          { text: "En moyenne, seuls 35 % des internautes regardent encore la vidéo au bout de 5 secondes (et 4 % jusqu'au bout)", isCorrect: true },
           { text: "Parce que le format 9:16 bascule en 16:9 passé ce délai", isCorrect: false }
         ],
         explanation: "Avec 65 % d'abandon dès les 5 premières secondes, il faut démarrer par le moment fort et un plan très visuel (idéalement avec présence humaine)."
@@ -509,8 +509,8 @@
         question: "Que faut-il faire avec la musique d'illustration lorsqu'on remonte un sujet télé pour les réseaux sociaux ?",
         options: [
           { text: "Monter le volume de la musique de +6 dB pour dynamiser le sujet", isCorrect: false },
-          { text: "Supprimer la musique ajoutée au montage (en utilisant la piste sans musique du MXF), sauf si elle a été captée en direct au tournage", isCorrect: true },
-          { text: "Remplacer systématiquement la musique par un jingle d'antenne", isCorrect: false }
+          { text: "Remplacer systématiquement la musique par un jingle d'antenne", isCorrect: false },
+          { text: "Supprimer la musique ajoutée au montage (en utilisant la piste sans musique du MXF), sauf si elle a été captée en direct au tournage", isCorrect: true }
         ],
         explanation: "Les réseaux sociaux bloquent automatiquement les vidéos contenant des musiques protégées (et parfois même libres de droits), d'où l'usage de la piste sans musique."
       },
@@ -526,8 +526,8 @@
       {
         question: "Pendant combien de temps et sur quel fond s'affichent les crédits en fin de vidéo ?",
         options: [
-          { text: "Sur les 4 dernières secondes, directement sur l'image vidéo (sans ajouter d'écran noir)", isCorrect: true },
           { text: "Sur un carton noir de 3 secondes ajouté après la dernière image", isCorrect: false },
+          { text: "Sur les 4 dernières secondes, directement sur l'image vidéo (sans ajouter d'écran noir)", isCorrect: true },
           { text: "Sur un fondu au noir progressif de 5 secondes", isCorrect: false }
         ],
         explanation: "On n'ajoute jamais d'écran noir ni de fondu au noir à la fin : les vidéos tournent en boucle sur les réseaux sociaux."
@@ -536,8 +536,8 @@
         question: "Que doit faire le logo « .tv » tout au long de la vidéo 9:16 ?",
         options: [
           { text: "Disparaître en fondu 2 secondes avant la fin pour laisser place aux crédits", isCorrect: false },
-          { text: "Rester affiché de la première à la dernière image sans jamais disparaître (ni en cut ni en fondu)", isCorrect: true },
-          { text: "N'apparaître que pendant les 5 premières secondes avec le titre", isCorrect: false }
+          { text: "N'apparaître que pendant les 5 premières secondes avec le titre", isCorrect: false },
+          { text: "Rester affiché de la première à la dernière image sans jamais disparaître (ni en cut ni en fondu)", isCorrect: true }
         ],
         explanation: "Le logo « .tv » signe l'intégralité du contenu : il ne doit jamais disparaître avant la toute dernière image."
       }
@@ -546,6 +546,7 @@
     let currentQuestion = 0;
     let score = 0;
     let currentOptions = [];
+    let targetCorrectPositions = [];
     const letters = ["A", "B", "C", "D"];
 
     function shuffleArray(array) {
@@ -557,17 +558,58 @@
       return shuffled;
     }
 
+    // Génère une séquence aléatoire équilibrée (A, B, C) sans jamais répéter deux fois la même position d'affilée
+    function generateBalancedPositions(totalQuestions, numChoices) {
+      let positions = [];
+      for (let i = 0; i < totalQuestions; i++) {
+        positions.push(i % numChoices);
+      }
+
+      let valid = false;
+      let attempts = 0;
+      while (!valid && attempts < 100) {
+        positions = shuffleArray(positions);
+        valid = true;
+        for (let i = 1; i < positions.length; i++) {
+          if (positions[i] === positions[i - 1]) {
+            valid = false;
+            break;
+          }
+        }
+        attempts++;
+      }
+      return positions;
+    }
+
+    function arrangeOptionsForQuestion(options, targetCorrectIndex) {
+      const correctOption = options.find(opt => opt.isCorrect);
+      const wrongOptions = shuffleArray(options.filter(opt => !opt.isCorrect));
+      const arranged = [];
+      let wrongIdx = 0;
+
+      for (let i = 0; i < options.length; i++) {
+        if (i === targetCorrectIndex) {
+          arranged.push(correctOption);
+        } else {
+          arranged.push(wrongOptions[wrongIdx++]);
+        }
+      }
+      return arranged;
+    }
+
     function startQuiz() {
       document.getElementById("start-screen").classList.add("hidden");
       document.getElementById("quiz-screen").classList.remove("hidden");
       currentQuestion = 0;
       score = 0;
+      targetCorrectPositions = generateBalancedPositions(quizData.length, 3);
       showQuestion();
     }
 
     function showQuestion() {
       const q = quizData[currentQuestion];
-      currentOptions = shuffleArray(q.options);
+      const targetPos = targetCorrectPositions[currentQuestion];
+      currentOptions = arrangeOptionsForQuestion(q.options, targetPos);
 
       document.getElementById("question-counter").textContent = `Question ${currentQuestion + 1} / ${quizData.length}`;
       document.getElementById("score-badge").textContent = `Score : ${score}`;

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Décodeur 9:16 — Atelier Vidéo Sociale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #756b96;
+            --primary-dark: #5c5378;
+            --sand: #dbd6c6;
+            --bg-light: #f4f2ec;
+            --text-dark: #504f4c;
+            --white: #ffffff;
+            --cat-rythme: #756b96;
+            --cat-cadre: #4a7c7e;
+            --cat-habillage: #b86b52;
+            --cat-son: #6b8e5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3, .font-oswald {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1.2rem 1.5rem;
+            border-bottom: 4px solid var(--sand);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.7rem;
+            line-height: 1.1;
+        }
+
+        .header-title p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .badge-live {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot-live {
+            width: 8px;
+            height: 8px;
+            background-color: #7ee787;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+
+        .btn-sound {
+            background: var(--sand);
+            color: var(--text-dark);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        /* Zone de saisie */
+        .input-panel {
+            background: var(--white);
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(80, 79, 76, 0.06);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 160px 210px 1fr auto;
+            gap: 0.8rem;
+            align-items: end;
+        }
+
+        @media (max-width: 850px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-group-text {
+                grid-column: 1 / -1;
+            }
+            .btn-submit {
+                grid-column: 1 / -1;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+            color: var(--primary);
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border: 1.5px solid var(--sand);
+            border-radius: 6px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--white);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 6px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Grille des 4 colonnes */
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+        }
+
+        @media (max-width: 1050px) {
+            .board-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .board-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            background: rgba(219, 214, 198, 0.35);
+            border: 1.5px solid var(--sand);
+            border-radius: 10px;
+            padding: 0.9rem;
+            min-height: 360px;
+        }
+
+        .col-header {
+            padding-bottom: 0.6rem;
+            margin-bottom: 0.9rem;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .col-header h2 {
+            font-size: 1.15rem;
+        }
+
+        .col-count {
+            background: var(--primary);
+            color: var(--white);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .col-rythme .col-header { border-color: var(--cat-rythme); }
+        .col-rythme .col-count { background: var(--cat-rythme); }
+
+        .col-cadre .col-header { border-color: var(--cat-cadre); }
+        .col-cadre .col-count { background: var(--cat-cadre); }
+
+        .col-habillage .col-header { border-color: var(--cat-habillage); }
+        .col-habillage .col-count { background: var(--cat-habillage); }
+
+        .col-son .col-header { border-color: var(--cat-son); }
+        .col-son .col-count { background: var(--cat-son); }
+
+        /* Cartes d'idées */
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .idea-card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 0.85rem;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .col-rythme .idea-card { border-left-color: var(--cat-rythme); }
+        .col-cadre .idea-card { border-left-color: var(--cat-cadre); }
+        .col-habillage .idea-card { border-left-color: var(--cat-habillage); }
+        .col-son .idea-card { border-left-color: var(--cat-son); }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .idea-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            word-wrap: break-word;
+        }
+
+        .idea-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #7a7873;
+        }
+
+        .team-tag {
+            background: var(--bg-light);
+            border: 1px solid var(--sand);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .btn-like {
+            background: var(--bg-light);
+            border: 1px solid var(--sand);
+            color: var(--text-dark);
+            padding: 3px 9px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+        }
+
+        .btn-like:hover, .btn-like.liked {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* Barre formateur & Corrigé */
+        .trainer-bar {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 2px dashed var(--sand);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.55rem 1.1rem;
+            border-radius: 6px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            border-color: #b86b52;
+            color: #b86b52;
+        }
+
+        .btn-danger:hover {
+            background: #b86b52;
+            color: var(--white);
+        }
+
+        /* Tableau corrigé */
+        .debrief-panel {
+            display: none;
+            margin-top: 1.5rem;
+            background: var(--white);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .debrief-panel.visible {
+            display: block;
+            animation: popIn 0.3s ease;
+        }
+
+        .debrief-panel h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.85rem;
+            text-align: left;
+            border-bottom: 1px solid var(--sand);
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: var(--white);
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        ul.clean-list {
+            padding-left: 1.1rem;
+        }
+
+        ul.clean-list li {
+            margin-bottom: 0.35rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <h1>Le Décodeur 9:16 — Atelier Vidéo Sociale</h1>
+        <p>Observez, repérez et listez en direct les codes qui différencient le 9:16 social du reportage JT</p>
+    </div>
+    <div class="header-controls">
+        <div class="badge-live"><span class="dot-live"></span> Mur collaboratif en direct</div>
+        <button id="toggleSound" class="btn-sound" title="Activer/couper le son d'arrivée des cartes">🔔 Son : Activé</button>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Formulaire de contribution -->
+    <section class="input-panel">
+        <form id="ideaForm" class="form-grid">
+            <div class="form-group">
+                <label for="teamSelect">Votre binôme / groupe</label>
+                <select id="teamSelect" required>
+                    <option value="Binôme 1">Binôme 1</option>
+                    <option value="Binôme 2">Binôme 2</option>
+                    <option value="Binôme 3">Binôme 3</option>
+                    <option value="Équipe A">Équipe A</option>
+                    <option value="Équipe B">Équipe B</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="categorySelect">Catégorie du code</label>
+                <select id="categorySelect" required>
+                    <option value="rythme">⏱️ Durée & Rythme</option>
+                    <option value="cadre">📱 Cadre & Compo 9:16</option>
+                    <option value="habillage">🔤 Habillage & Texte</option>
+                    <option value="son">🔊 Son & Mixage</option>
+                </select>
+            </div>
+            <div class="form-group form-group-text">
+                <label for="ideaInput">Code repéré dans la vidéo</label>
+                <input type="text" id="ideaInput" placeholder="Ex : Sous-titres jaunes mot par mot, plan coupé avant 2 sec..." maxlength="140" required>
+            </div>
+            <button type="submit" class="btn-submit">+ Publier</button>
+        </form>
+    </section>
+
+    <!-- Tableau des 4 catégories -->
+    <main class="board-grid">
+        <div class="column col-rythme">
+            <div class="col-header">
+                <h2>⏱️ Durée & Rythme</h2>
+                <span class="col-count" id="count-rythme">0</span>
+            </div>
+            <div class="cards-list" id="list-rythme"></div>
+        </div>
+
+        <div class="column col-cadre">
+            <div class="col-header">
+                <h2>📱 Cadre & Compo 9:16</h2>
+                <span class="col-count" id="count-cadre">0</span>
+            </div>
+            <div class="cards-list" id="list-cadre"></div>
+        </div>
+
+        <div class="column col-habillage">
+            <div class="col-header">
+                <h2>🔤 Habillage & Texte</h2>
+                <span class="col-count" id="count-habillage">0</span>
+            </div>
+            <div class="cards-list" id="list-habillage"></div>
+        </div>
+
+        <div class="column col-son">
+            <div class="col-header">
+                <h2>🔊 Son & Mixage</h2>
+                <span class="col-count" id="count-son">0</span>
+            </div>
+            <div class="cards-list" id="list-son"></div>
+        </div>
+    </main>
+
+    <!-- Contrôles Formateur -->
+    <div class="trainer-bar">
+        <button id="toggleDebrief" class="btn-outline">📋 Afficher / Masquer la grille de synthèse (9:16 vs JT)</button>
+        <button id="clearBoard" class="btn-outline btn-danger">🗑️ Réinitialiser le mur (nouvelle session)</button>
+    </div>
+
+    <!-- Corrigé comparatif -->
+    <section id="debriefPanel" class="debrief-panel">
+        <h2>Grille de synthèse : Les réflexes JT à déconstruire pour le 9:16</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 18%;">Axe d'analyse</th>
+                    <th style="width: 44%;">Codes 9:16 efficaces (Réseaux Sociaux)</th>
+                    <th style="width: 38%;">Réflexes TV / JT classiques (À éviter ici)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. Durée & Rythme</strong></td>
+                    <td>
+                        <ul class="clean-list">
+                            <li><strong>Le Hook (0-3 sec) :</strong> Phrase choc, question ou image forte dès la 1ère seconde.</li>
+                            <li><strong>Cuts ultra-courts :</strong> Plans de 1,5 à 2,5 secondes max.</li>
+                            <li><strong>Jump cuts :</strong> Suppression systématique des respirations et hésitations en interview.</li>
+                            <li><strong>Durée totale :</strong> 45 sec à 1 min 30 max.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="clean-list">
+                            <li>Lancement lent, contextualisation progressive.</li>
+                            <li>Plans de 4 à 7 secondes pour « poser » le regard.</li>
+                            <li>Respect strict des silences et respirations.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>2. Cadre & Compo 9:16</strong></td>
+                    <td>
+                        <ul class="clean-list">
+                            <li><strong>Plans serrés :</strong> Gros plans et très gros plans (écran de smartphone).</li>
+                            <li><strong>Sujet centré :</strong> Placé au milieu, loin du bas (légendes) et de la droite (boutons UI).</li>
+                            <li><strong>Mouvement permanent :</strong> Zooms numériques légers (<em>keyframing</em>), recadrages dynamiques.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="clean-list">
+                            <li>Règle des tiers, grand espace devant le regard.</li>
+                            <li>Plans larges de situation fréquents.</li>
+                            <li>Plans fixes sur pied privilégiés.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>3. Habillage & Texte</strong></td>
+                    <td>
+                        <ul class="clean-list">
+                            <li><strong>Sous-titres incrustés :</strong> Gros, lisibles, animés mot par mot (70 % regardent sans le son).</li>
+                            <li><strong>Textage éditorial :</strong> Titre accrocheur permanent en haut, mots-clés qui poppent.</li>
+                            <li><strong>Split-screen / Incrustations :</strong> Journaliste + archive à l'écran simultanément.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="clean-list">
+                            <li>Sous-titres réservés aux traductions ou malentendants.</li>
+                            <li>Synthés (bandeaux noms/fonctions) sobres et ponctuels.</li>
+                            <li>Image plein écran sans surcharge graphique.</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>4. Son & Mixage</strong></td>
+                    <td>
+                        <ul class="clean-list">
+                            <li><strong>Tapis musical quasi permanent :</strong> Rythmé, calé sur l'émotion ou la tension.</li>
+                            <li><strong>Sound Design (SFX) :</strong> <em>Whooshes</em> sur les transitions, <em>pops</em> sur les textes.</li>
+                            <li><strong>Compression forte :</strong> Voix très en avant, mixage pensé pour un haut-parleur de téléphone.</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="clean-list">
+                            <li>Musique rare en reportage d'actualité pure.</li>
+                            <li>Aucun effet sonore artificiel.</li>
+                            <li>Mixage dynamique avec forts écarts entre sons faibles et forts.</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<!-- SDK Firebase (Compat pour simplicité en fichier unique) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+    // =========================================================================
+    // ⚠️ COLLEZ ICI VOTRE CONFIGURATION FIREBASE (ÉTAPE 1)
+    // =========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAcoAqeoKLM9ni98_8M2LOau4lnza28Yyg",
+  authDomain: "decodeur-social-f3.firebaseapp.com",
+  databaseURL: "https://decodeur-social-f3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "decodeur-social-f3",
+  storageBucket: "decodeur-social-f3.firebasestorage.app",
+  messagingSenderId: "1039514381837",
+  appId: "1:1039514381837:web:3a01f2366afdc38c422f44"
+};
+    // =========================================================================
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ideasRef = db.ref('atelier_f3_916/ideas');
+
+    // Gestion du son (Web Audio API - zéro fichier mp3 externe requis)
+    let soundEnabled = true;
+    let isInitialLoad = true;
+
+    function playPopSound() {
+        if (!soundEnabled) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime); // Ré5
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // La5
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.25);
+        } catch (e) {}
+    }
+
+    document.getElementById('toggleSound').addEventListener('click', (e) => {
+        soundEnabled = !soundEnabled;
+        e.target.textContent = soundEnabled ? '🔔 Son : Activé' : '🔕 Son : Coupé';
+    });
+
+    // Mémoriser le binôme choisi par l'apprenant
+    const teamSelect = document.getElementById('teamSelect');
+    if (localStorage.getItem('f3_team')) {
+        teamSelect.value = localStorage.getItem('f3_team');
+    }
+    teamSelect.addEventListener('change', () => {
+        localStorage.setItem('f3_team', teamSelect.value);
+    });
+
+    // Envoi d'une nouvelle idée
+    document.getElementById('ideaForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = document.getElementById('ideaInput').value.trim();
+        if (!text) return;
+
+        ideasRef.push({
+            team: teamSelect.value,
+            category: document.getElementById('categorySelect').value,
+            text: text,
+            likes: 1,
+            timestamp: Date.now()
+        });
+
+        document.getElementById('ideaInput').value = '';
+        document.getElementById('ideaInput').focus();
+    });
+
+    // Gestion des likes locaux (évite de liker 20 fois la même carte)
+    const likedCards = JSON.parse(localStorage.getItem('f3_liked') || '{}');
+
+    window.likeIdea = function(id) {
+        if (likedCards[id]) return;
+        likedCards[id] = true;
+        localStorage.setItem('f3_liked', JSON.stringify(likedCards));
+        ideasRef.child(id).child('likes').transaction((current) => (current || 0) + 1);
+    };
+
+    // Affichage en temps réel
+    ideasRef.on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const categories = ['rythme', 'cadre', 'habillage', 'son'];
+        const grouped = { rythme: [], cadre: [], habillage: [], son: [] };
+
+        Object.entries(data).forEach(([id, item]) => {
+            if (grouped[item.category]) {
+                grouped[item.category].push({ id, ...item });
+            }
+        });
+
+        categories.forEach(cat => {
+            // Tri par nombre de likes décroissant, puis par ordre d'arrivée
+            grouped[cat].sort((a, b) => (b.likes - a.likes) || (b.timestamp - a.timestamp));
+            
+            const listEl = document.getElementById(`list-${cat}`);
+            const countEl = document.getElementById(`count-${cat}`);
+            countEl.textContent = grouped[cat].length;
+
+            listEl.innerHTML = grouped[cat].map(item => `
+                <div class="idea-card">
+                    <div class="idea-text">${escapeHtml(item.text)}</div>
+                    <div class="idea-footer">
+                        <span class="team-tag">${escapeHtml(item.team)}</span>
+                        <button class="btn-like ${likedCards[item.id] ? 'liked' : ''}" onclick="likeIdea('${item.id}')">
+                            👍 +${item.likes || 1}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        });
+
+        if (!isInitialLoad) {
+            playPopSound();
+        }
+        isInitialLoad = false;
+    });
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // Bouton corrigé formateur
+    document.getElementById('toggleDebrief').addEventListener('click', () => {
+        const panel = document.getElementById('debriefPanel');
+        panel.classList.toggle('visible');
+        if (panel.classList.contains('visible')) {
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Bouton réinitialisation
+    document.getElementById('clearBoard').addEventListener('click', () => {
+        const pwd = prompt("Mot de passe formateur pour vider le tableau (tapez : F3) :");
+        if (pwd && pwd.toUpperCase() === 'F3') {
+            ideasRef.remove();
+            localStorage.removeItem('f3_liked');
+        }
+    });
+</script>
+
+</body>
+</html>

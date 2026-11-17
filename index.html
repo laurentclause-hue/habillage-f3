@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quiz — Habillage & Montage Vidéo 9:16 | Videonline.info</title>
+  <title>Quiz Live Multi-joueurs — Habillage 9:16 | Videonline.info</title>
   <!-- Typographies officielles : Open Sans (300, 400, 700, 800 - sans 600) & Oswald (700) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,300;1,400&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <!-- PeerJS pour la synchronisation temps réel sans serveur -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <style>
     :root {
       /* Couleurs principales */
@@ -45,10 +47,9 @@
       font-weight: 400;
     }
 
-    /* Barre supérieure avec logotype en Oswald Bold */
     .brand-bar {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -63,8 +64,6 @@
       letter-spacing: 0.01em;
       color: var(--noir);
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
     }
 
     .brand-tag {
@@ -75,15 +74,14 @@
       letter-spacing: 0.04em;
     }
 
-    /* Conteneur principal */
     .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       background: var(--blanc);
       border: 1px solid var(--beige-bordure);
       border-top: 5px solid var(--accent-violet);
       border-radius: 14px;
-      padding: 34px 30px;
+      padding: 32px 28px;
       box-shadow: 0 10px 30px rgba(33, 33, 33, 0.06);
     }
 
@@ -121,68 +119,325 @@
       display: inline-block;
     }
 
-    /* Barre de progression */
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--beige-fond);
-      border: 1px solid var(--beige-bordure);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent-violet);
-      width: 0%;
-      transition: width 0.35s ease;
-    }
-
-    /* Titres en Open Sans ExtraBold & Bold */
     h1 {
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       font-weight: 800;
       line-height: 1.25;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: var(--noir);
     }
 
     .subtitle {
       color: var(--gris-fonce);
       font-weight: 400;
-      line-height: 1.65;
-      margin-bottom: 28px;
-      font-size: 0.98rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-size: 0.96rem;
     }
 
-    .question-text {
-      font-size: 1.22rem;
+    /* Boutons */
+    .primary-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 15px 20px;
+      background: var(--accent-violet);
+      color: var(--blanc);
       font-weight: 700;
-      line-height: 1.45;
-      margin-bottom: 22px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.1s ease;
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--beige-fond);
+      color: var(--noir);
+      font-weight: 700;
+      font-size: 0.96rem;
+      border: 1.5px solid var(--beige-bordure);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+      background: var(--beige-bordure);
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .role-card {
+      padding: 22px 18px;
+      border: 1.5px solid var(--beige-bordure);
+      border-radius: 12px;
+      background: var(--blanc);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .role-card:hover {
+      background: var(--beige-fond);
+      border-color: var(--accent-violet);
+    }
+
+    .role-card h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
       color: var(--noir);
     }
 
-    /* Choix de réponses */
+    .role-card p {
+      font-size: 0.88rem;
+      color: var(--gris-fonce);
+      line-height: 1.45;
+    }
+
+    /* Formulaire joueur */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--noir);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid var(--beige-bordure);
+      border-radius: 10px;
+      font-size: 1rem;
+      color: var(--noir);
+      background: var(--blanc);
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: var(--accent-violet);
+    }
+
+    .code-input {
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    /* Sélecteur de numéro 1 à 6 */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    .slot-btn {
+      padding: 12px 0;
+      border: 1.5px solid var(--beige-bordure);
+      border-radius: 10px;
+      background: var(--beige-fond);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--noir);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .slot-btn:hover:not(:disabled) {
+      border-color: var(--accent-violet);
+    }
+
+    .slot-btn.selected {
+      background: var(--accent-violet);
+      border-color: var(--accent-violet);
+      color: var(--blanc);
+    }
+
+    .slot-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    /* Code de salle animateur */
+    .room-banner {
+      background: var(--beige-fond);
+      border: 1.5px dashed var(--beige-bordure);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .room-code-display {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--noir);
+      margin: 4px 0;
+    }
+
+    .copy-link-btn {
+      margin-top: 8px;
+      padding: 7px 14px;
+      background: var(--blanc);
+      border: 1px solid var(--beige-bordure);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--noir);
+      cursor: pointer;
+    }
+
+    .copy-link-btn:hover {
+      background: var(--beige-bordure);
+    }
+
+    /* Liste des joueurs */
+    .players-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .player-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border: 1px solid var(--beige-bordure);
+      border-radius: 10px;
+      background: var(--beige-fond);
+      font-size: 0.92rem;
+    }
+
+    .player-pill.empty {
+      opacity: 0.45;
+      background: var(--blanc);
+    }
+
+    .player-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: var(--accent-violet);
+      color: var(--blanc);
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .player-pill.empty .player-num {
+      background: var(--beige-bordure);
+      color: var(--gris-fonce);
+    }
+
+    /* Compteur 30s */
+    .timer-wrapper {
+      margin-bottom: 22px;
+    }
+
+    .timer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gris-fonce);
+    }
+
+    .timer-seconds {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--noir);
+    }
+
+    .timer-seconds.urgent {
+      color: var(--accent-erreur);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: var(--beige-fond);
+      border: 1px solid var(--beige-bordure);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-violet);
+      width: 100%;
+      transition: width 0.25s linear, background-color 0.25s ease;
+    }
+
+    .progress-fill.urgent {
+      background: var(--accent-erreur);
+    }
+
+    /* Question & options */
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 20px;
+      color: var(--noir);
+    }
+
     .options {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 11px;
     }
 
     .option-btn {
       background: var(--blanc);
       border: 1.5px solid var(--beige-bordure);
       color: var(--gris-fonce);
-      padding: 15px 16px;
+      padding: 14px 16px;
       border-radius: 10px;
       text-align: left;
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 400;
       line-height: 1.45;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.16s ease;
       display: flex;
       align-items: flex-start;
       gap: 14px;
@@ -198,7 +453,18 @@
       cursor: default;
     }
 
-    /* Pastille lettre */
+    .option-btn.chosen {
+      border-color: var(--accent-bleu);
+      background: rgba(71, 140, 226, 0.1);
+      color: var(--noir);
+    }
+
+    .option-btn.chosen .option-letter {
+      background: var(--accent-bleu);
+      border-color: var(--accent-bleu);
+      color: var(--blanc);
+    }
+
     .option-letter {
       background: var(--beige-fond);
       color: var(--noir);
@@ -212,19 +478,11 @@
       justify-content: center;
       font-size: 0.88rem;
       flex-shrink: 0;
-      transition: all 0.18s ease;
     }
 
-    .option-btn:hover:not(:disabled) .option-letter {
-      background: var(--beige-bordure);
-      border-color: var(--beige-bordure);
-      color: var(--noir);
-    }
-
-    /* État bonne réponse */
     .option-btn.correct {
       border-color: var(--accent-vert);
-      background: rgba(71, 226, 110, 0.12);
+      background: rgba(71, 226, 110, 0.15);
       color: var(--noir);
     }
 
@@ -234,10 +492,9 @@
       color: var(--noir);
     }
 
-    /* État mauvaise réponse */
     .option-btn.wrong {
       border-color: var(--accent-erreur);
-      background: rgba(234, 81, 83, 0.08);
+      background: rgba(234, 81, 83, 0.1);
       color: var(--noir);
     }
 
@@ -247,19 +504,17 @@
       color: var(--blanc);
     }
 
-    /* Encart explication */
+    /* Explication & Tableau des scores */
     .feedback {
-      margin-top: 22px;
-      padding: 16px 18px;
+      margin-top: 20px;
+      padding: 15px 18px;
       border-radius: 10px;
       background: var(--beige-fond);
       border: 1px solid var(--beige-bordure);
       border-left: 4px solid var(--accent-violet);
-      font-size: 0.94rem;
-      font-weight: 400;
-      line-height: 1.55;
+      font-size: 0.93rem;
+      line-height: 1.5;
       color: var(--gris-fonce);
-      display: none;
     }
 
     .feedback-header {
@@ -269,106 +524,154 @@
       font-weight: 700;
       font-size: 0.98rem;
       color: var(--noir);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
-    .status-pill {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
+    .scoreboard {
+      margin-top: 20px;
+      border: 1px solid var(--beige-bordure);
+      border-radius: 12px;
+      overflow: hidden;
     }
 
-    /* Boutons d'action principaux */
-    .primary-btn {
-      margin-top: 24px;
-      width: 100%;
-      padding: 15px 20px;
-      background: var(--accent-violet);
-      color: var(--blanc);
+    .scoreboard-title {
+      background: var(--beige-fond);
+      padding: 10px 16px;
+      font-size: 0.8rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gris-fonce);
+      border-bottom: 1px solid var(--beige-bordure);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--beige-bordure);
+      background: var(--blanc);
+      font-size: 0.95rem;
+    }
+
+    .score-row:last-child {
+      border-bottom: none;
+    }
+
+    .score-row.leader {
+      background: rgba(71, 226, 110, 0.12);
+    }
+
+    .score-player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--noir);
+    }
+
+    .round-delta {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+
+    .round-delta.plus {
+      background: rgba(71, 226, 110, 0.25);
+      color: var(--noir);
+    }
+
+    .round-delta.zero {
+      background: var(--beige-fond);
+      color: var(--gris-fonce);
+    }
+
+    .score-points {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--noir);
+    }
+
+    .winner-box {
+      text-align: center;
+      background: var(--beige-fond);
+      border: 2px solid var(--accent-vert);
+      border-radius: 14px;
+      padding: 24px 18px;
+      margin: 18px 0 22px 0;
+    }
+
+    .winner-crown {
+      display: inline-block;
+      background: var(--accent-vert);
+      color: var(--noir);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .winner-name {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--noir);
+      margin-bottom: 4px;
+    }
+
+    .winner-score {
       font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: opacity 0.2s ease, transform 0.1s ease;
+      font-weight: 700;
+      color: var(--gris-fonce);
     }
 
-    .primary-btn:hover {
-      opacity: 0.9;
-    }
-
-    .primary-btn:active {
-      transform: scale(0.99);
-    }
-
-    .hidden {
+    .error-msg {
+      color: var(--accent-erreur);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 10px;
       display: none;
     }
 
-    /* Écran final */
-    .score-circle {
-      width: 126px;
-      height: 126px;
-      border-radius: 50%;
-      background: var(--beige-fond);
-      border: 5px solid var(--beige-bordure);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 24px auto;
-    }
-
-    .score-number {
-      font-size: 2.3rem;
-      font-weight: 800;
-      color: var(--noir);
-      line-height: 1;
-    }
-
-    .score-total {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--gris-fonce);
-      margin-top: 4px;
-    }
-
-    .result-message {
+    .status-info {
       text-align: center;
-      font-size: 1.15rem;
-      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: var(--gris-fonce);
+      margin-top: 14px;
       font-weight: 700;
-      color: var(--noir);
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .footer-credit {
-      margin-top: 26px;
-      padding-top: 16px;
+      margin-top: 24px;
+      padding-top: 14px;
       border-top: 1px solid var(--beige-bordure);
       text-align: center;
-      font-size: 0.82rem;
-      font-weight: 400;
+      font-size: 0.8rem;
       color: var(--gris-fonce);
     }
 
     .footer-credit a {
       color: var(--noir);
-      text-decoration: underline;
-      text-decoration-color: var(--beige-bordure);
       font-weight: 700;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
+      .role-grid, .players-list {
+        grid-template-columns: 1fr;
+      }
       .container {
         padding: 24px 18px;
-      }
-      h1 {
-        font-size: 1.38rem;
-      }
-      .question-text {
-        font-size: 1.1rem;
       }
     }
   </style>
@@ -376,55 +679,161 @@
 <body>
   <div class="brand-bar">
     <a href="https://videonline.info" target="_blank" rel="noopener" class="brand-logo">Videonline.info</a>
-    <span class="brand-tag">Habillage & Montage 9:16</span>
+    <span class="brand-tag">Quiz Live • 6 Joueurs</span>
   </div>
 
   <div class="container">
-    <!-- Écran d'accueil -->
-    <div id="start-screen">
+    <!-- ÉCRAN 1 : CHOIX DU RÔLE -->
+    <div id="screen-role">
       <div class="header">
         <span class="badge"><span class="badge-dot"></span>Charte Réseaux Sociaux 9:16</span>
-        <span>12 Questions</span>
+        <span>12 Questions • 30s</span>
       </div>
-      <h1>Maîtrisez-vous les règles du nouvel habillage 9:16 ?</h1>
+      <h1>Quiz multijoueur en direct</h1>
       <p class="subtitle">
-        Titrage en cartouche, sous-titres, synthés de localisation, musique, rythme et crédits de fin : testez vos réflexes sur la nouvelle formule.
+        Affrontez-vous en temps réel sur les règles du nouvel habillage 9:16. L'animateur crée la salle et jusqu'à 6 participants rejoignent la partie depuis leur smartphone.
       </p>
-      <button class="primary-btn" onclick="startQuiz()">Démarrer le quiz</button>
+      <div class="role-grid">
+        <button class="role-card" onclick="initHost()">
+          <span class="badge" style="width:fit-content;"><span class="badge-dot"></span>Écran principal</span>
+          <h2>Créer une partie (Animateur)</h2>
+          <p>Génère un code de salle, affiche les inscrits (1 à 6) et pilote le lancement des questions.</p>
+        </button>
+        <button class="role-card" onclick="showJoinScreen()">
+          <span class="badge" style="width:fit-content;"><span class="badge-dot" style="background:var(--accent-bleu);"></span>Smartphone</span>
+          <h2>Rejoindre (Participant)</h2>
+          <p>Entrez le code de la salle, choisissez un numéro de 1 à 6 ou un pseudo et répondez en 30 s.</p>
+        </button>
+      </div>
       <div class="footer-credit">
         Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
       </div>
     </div>
 
-    <!-- Écran de question -->
-    <div id="quiz-screen" class="hidden">
+    <!-- ÉCRAN 2A : SALON D'ATTENTE ANIMATEUR -->
+    <div id="screen-host-lobby" class="hidden">
       <div class="header">
-        <span id="question-counter">Question 1 / 12</span>
-        <span class="badge"><span class="badge-dot"></span><span id="score-badge">Score : 0</span></span>
+        <span class="badge"><span class="badge-dot"></span>Salon Animateur</span>
+        <span id="host-count-label">0 / 6 participants</span>
       </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
+      <div class="room-banner">
+        <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;color:var(--gris-fonce);">Code de la salle à partager</div>
+        <div class="room-code-display" id="host-room-code">----</div>
+        <button class="copy-link-btn" id="copy-link-btn" onclick="copyInviteLink()">Copier le lien d'invitation directe</button>
       </div>
-      <div class="question-text" id="question-text"></div>
-      <div class="options" id="options-container"></div>
-      <div class="feedback" id="feedback-box"></div>
-      <button class="primary-btn hidden" id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      <div class="form-label">Participants connectés (places 1 à 6)</div>
+      <div class="players-list" id="host-players-grid"></div>
+      <button class="primary-btn" id="start-game-btn" onclick="hostStartGame()" disabled>En attente d'au moins 1 participant…</button>
+      <div class="footer-credit">
+        Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
+      </div>
     </div>
 
-    <!-- Écran de résultat -->
-    <div id="result-screen" class="hidden">
+    <!-- ÉCRAN 2B : INSCRIPTION PARTICIPANT -->
+    <div id="screen-join" class="hidden">
       <div class="header">
-        <span class="badge"><span class="badge-dot" style="background-color: var(--accent-vert);"></span>Bilan</span>
-        <span>Terminé</span>
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-bleu);"></span>Inscription</span>
+        <span>Max. 6 joueurs</span>
       </div>
-      <h1 style="text-align:center;">Votre score final</h1>
-      <div class="score-circle">
-        <span class="score-number" id="final-score">0</span>
-        <span class="score-total">sur 12</span>
+      <h1>Rejoindre la partie</h1>
+      <div class="form-group">
+        <label class="form-label" for="join-code-input">Code de la salle (4 lettres)</label>
+        <input type="text" id="join-code-input" class="text-input code-input" maxlength="4" placeholder="EX: ABCD" />
       </div>
-      <p class="result-message" id="result-title"></p>
-      <p class="subtitle" style="text-align:center;" id="result-desc"></p>
-      <button class="primary-btn" onclick="restartQuiz()">Recommencer le quiz</button>
+      <div class="form-group">
+        <label class="form-label">Choisissez votre numéro (1 à 6)</label>
+        <div class="slots-grid" id="slots-selector">
+          <button type="button" class="slot-btn selected" data-slot="1" onclick="selectSlot(1)">1</button>
+          <button type="button" class="slot-btn" data-slot="2" onclick="selectSlot(2)">2</button>
+          <button type="button" class="slot-btn" data-slot="3" onclick="selectSlot(3)">3</button>
+          <button type="button" class="slot-btn" data-slot="4" onclick="selectSlot(4)">4</button>
+          <button type="button" class="slot-btn" data-slot="5" onclick="selectSlot(5)">5</button>
+          <button type="button" class="slot-btn" data-slot="6" onclick="selectSlot(6)">6</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="join-pseudo-input">Votre pseudo (optionnel)</label>
+        <input type="text" id="join-pseudo-input" class="text-input" maxlength="18" placeholder="Ex: Marie (sinon « Joueur N° »)" />
+      </div>
+      <div class="error-msg" id="join-error"></div>
+      <button class="primary-btn" id="join-submit-btn" onclick="joinRoom()">Valider mon inscription</button>
+      <button class="secondary-btn" onclick="location.reload()">← Retour</button>
+    </div>
+
+    <!-- ÉCRAN 2C : SALLE D'ATTENTE PARTICIPANT -->
+    <div id="screen-player-wait" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-vert);"></span>Inscrit</span>
+        <span id="wait-room-badge">Salle ----</span>
+      </div>
+      <h1 id="wait-player-title">Bienvenue !</h1>
+      <p class="subtitle">
+        Vous êtes bien connecté à la partie. Gardez cet écran ouvert : la première question démarrera dès que l'animateur lancera le quiz.
+      </p>
+      <div class="form-label">Participants dans la salle</div>
+      <div class="players-list" id="player-wait-grid"></div>
+      <div class="status-info">En attente du lancement par l'animateur…</div>
+    </div>
+
+    <!-- ÉCRAN 3 : JEU (QUESTION + COMPTEUR 30S + RÉSULTATS DE MANCHE) -->
+    <div id="screen-game" class="hidden">
+      <div class="header">
+        <span id="game-q-counter">Question 1 / 12</span>
+        <span class="badge" id="game-role-badge"><span class="badge-dot"></span>En direct</span>
+      </div>
+
+      <!-- Barre compteur 30 secondes -->
+      <div class="timer-wrapper" id="timer-box">
+        <div class="timer-top">
+          <span id="timer-label">Temps restant pour répondre</span>
+          <span class="timer-seconds" id="timer-seconds">30 s</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="timer-bar"></div>
+        </div>
+      </div>
+
+      <div class="question-text" id="game-question-text"></div>
+      <div class="options" id="game-options-container"></div>
+
+      <div class="status-info hidden" id="player-answered-info">Réponse enregistrée ! En attente de la fin du chrono…</div>
+      <div class="status-info hidden" id="host-answers-info">0 / 0 réponses reçues</div>
+
+      <!-- Bloc révélation après les 30s -->
+      <div id="reveal-section" class="hidden">
+        <div class="feedback" id="game-feedback-box"></div>
+        <div class="scoreboard">
+          <div class="scoreboard-title">
+            <span>Classement cumulé</span>
+            <span>Points</span>
+          </div>
+          <div id="round-scoreboard-rows"></div>
+        </div>
+        <button class="primary-btn hidden" id="host-next-btn" onclick="hostNextStep()">Question suivante →</button>
+      </div>
+    </div>
+
+    <!-- ÉCRAN 4 : PODIUM FINAL -->
+    <div id="screen-final" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-vert);"></span>Partie terminée</span>
+        <span>12 Questions</span>
+      </div>
+      <h1 style="text-align:center;">Classement final</h1>
+      <div class="winner-box">
+        <div class="winner-crown">Vainqueur du quiz</div>
+        <div class="winner-name" id="final-winner-name">—</div>
+        <div class="winner-score" id="final-winner-score">0 point</div>
+      </div>
+      <div class="scoreboard">
+        <div class="scoreboard-title">
+          <span>Podium complet</span>
+          <span>Score final</span>
+        </div>
+        <div id="final-scoreboard-rows"></div>
+      </div>
+      <button class="primary-btn hidden" id="host-restart-btn" onclick="hostRestartGame()">Rejouer une partie avec les mêmes joueurs</button>
+      <button class="secondary-btn" onclick="location.href = location.pathname">Quitter et revenir à l'accueil</button>
       <div class="footer-credit">
         Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
       </div>
@@ -432,7 +841,10 @@
   </div>
 
   <script>
-    const quizData = [
+    /* ==========================================================================
+       1. DONNÉES DU QUIZ (12 QUESTIONS — HABILLAGE VIDÉO 9:16)
+       ========================================================================== */
+    const QUIZ_QUESTIONS = [
       {
         question: "Quelle est la durée d'affichage et la fonction du nouveau cartouche de titre en début de vidéo 9:16 ?",
         options: [
@@ -536,166 +948,339 @@
         question: "Que doit faire le logo « .tv » tout au long de la vidéo 9:16 ?",
         options: [
           { text: "Disparaître en fondu 2 secondes avant la fin pour laisser place aux crédits", isCorrect: false },
-          { text: "N'apparaître que pendant les 5 premières secondes avec le titre", isCorrect: false },
-          { text: "Rester affiché de la première à la dernière image sans jamais disparaître (ni en cut ni en fondu)", isCorrect: true }
+          { text: "Rester affiché de la première à la dernière image sans jamais disparaître (ni en cut ni en fondu)", isCorrect: true },
+          { text: "N'apparaître que pendant les 5 premières secondes avec le titre", isCorrect: false }
         ],
         explanation: "Le logo « .tv » signe l'intégralité du contenu : il ne doit jamais disparaître avant la toute dernière image."
       }
     ];
 
-    let currentQuestion = 0;
-    let score = 0;
-    let currentOptions = [];
-    let targetCorrectPositions = [];
-    const letters = ["A", "B", "C", "D"];
+    /* ==========================================================================
+       2. UTILITAIRES DE MÉLANGE ÉQUILIBRÉ (SANS RÉPÉTITION CONSÉCUTIVE)
+       ========================================================================== */
+    const LETTERS = ["A", "B", "C", "D"];
+    const ROUND_DURATION = 30; // 30 secondes par question
 
-    function shuffleArray(array) {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        [copy[i], copy[j]] = [copy[j], copy[i]];
       }
-      return shuffled;
+      return copy;
     }
 
-    // Génère une séquence aléatoire équilibrée (A, B, C) sans jamais répéter deux fois la même position d'affilée
     function generateBalancedPositions(totalQuestions, numChoices) {
       let positions = [];
-      for (let i = 0; i < totalQuestions; i++) {
-        positions.push(i % numChoices);
-      }
-
-      let valid = false;
-      let attempts = 0;
+      for (let i = 0; i < totalQuestions; i++) positions.push(i % numChoices);
+      let valid = false, attempts = 0;
       while (!valid && attempts < 100) {
         positions = shuffleArray(positions);
         valid = true;
         for (let i = 1; i < positions.length; i++) {
-          if (positions[i] === positions[i - 1]) {
-            valid = false;
-            break;
-          }
+          if (positions[i] === positions[i - 1]) { valid = false; break; }
         }
         attempts++;
       }
       return positions;
     }
 
-    function arrangeOptionsForQuestion(options, targetCorrectIndex) {
-      const correctOption = options.find(opt => opt.isCorrect);
-      const wrongOptions = shuffleArray(options.filter(opt => !opt.isCorrect));
-      const arranged = [];
-      let wrongIdx = 0;
+    function prepareDeck() {
+      const positions = generateBalancedPositions(QUIZ_QUESTIONS.length, 3);
+      return QUIZ_QUESTIONS.map((q, idx) => {
+        const targetPos = positions[idx];
+        const correctOpt = q.options.find(o => o.isCorrect);
+        const wrongOpts = shuffleArray(q.options.filter(o => !o.isCorrect));
+        const arranged = [];
+        let w = 0;
+        for (let i = 0; i < q.options.length; i++) {
+          if (i === targetPos) arranged.push({ text: correctOpt.text, isCorrect: true });
+          else arranged.push({ text: wrongOpts[w++].text, isCorrect: false });
+        }
+        return {
+          question: q.question,
+          options: arranged,
+          correctIndex: targetPos,
+          explanation: q.explanation
+        };
+      });
+    }
 
-      for (let i = 0; i < options.length; i++) {
-        if (i === targetCorrectIndex) {
-          arranged.push(correctOption);
+    /* ==========================================================================
+       3. ÉTAT GLOBAL MULTIJOUEUR (PEERJS)
+       ========================================================================== */
+    let role = null; // 'host' ou 'player'
+    let peer = null;
+    let roomCode = "";
+    let hostConn = null; // Pour le joueur : connexion vers l'animateur
+    let connections = {}; // Pour l'animateur : peerId -> DataConnection
+
+    // État côté Animateur
+    let players = {}; // slot (1..6) -> { slot, name, score, peerId, currentAnswer, lastDelta }
+    let preparedQuestions = [];
+    let currentQIndex = 0;
+    let phase = "lobby"; // lobby | question | reveal | final
+    let timerInterval = null;
+    let timeLeft = ROUND_DURATION;
+
+    // État côté Joueur
+    let mySlot = 1;
+    let myName = "";
+    let mySelectedOption = null;
+
+    function showScreen(id) {
+      ["screen-role", "screen-host-lobby", "screen-join", "screen-player-wait", "screen-game", "screen-final"].forEach(s => {
+        document.getElementById(s).classList.add("hidden");
+      });
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    // Détection automatique d'un paramètre ?room=XXXX dans l'URL
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get("room");
+      if (roomParam) {
+        showJoinScreen();
+        document.getElementById("join-code-input").value = roomParam.toUpperCase().slice(0, 4);
+      }
+    });
+
+    /* ==========================================================================
+       4. LOGIQUE ANIMATEUR (HOST)
+       ========================================================================== */
+    function generateRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+
+    function initHost() {
+      role = "host";
+      roomCode = generateRoomCode();
+      document.getElementById("host-room-code").textContent = roomCode;
+      showScreen("screen-host-lobby");
+      renderPlayersGrid("host-players-grid");
+
+      peer = new Peer("videonline-quiz-" + roomCode);
+
+      peer.on("open", () => {
+        console.log("Salle ouverte :", roomCode);
+      });
+
+      peer.on("error", (err) => {
+        if (err.type === "unavailable-id") {
+          // Si le code est déjà pris, on en génère un autre
+          peer.destroy();
+          initHost();
         } else {
-          arranged.push(wrongOptions[wrongIdx++]);
-        }
-      }
-      return arranged;
-    }
-
-    function startQuiz() {
-      document.getElementById("start-screen").classList.add("hidden");
-      document.getElementById("quiz-screen").classList.remove("hidden");
-      currentQuestion = 0;
-      score = 0;
-      targetCorrectPositions = generateBalancedPositions(quizData.length, 3);
-      showQuestion();
-    }
-
-    function showQuestion() {
-      const q = quizData[currentQuestion];
-      const targetPos = targetCorrectPositions[currentQuestion];
-      currentOptions = arrangeOptionsForQuestion(q.options, targetPos);
-
-      document.getElementById("question-counter").textContent = `Question ${currentQuestion + 1} / ${quizData.length}`;
-      document.getElementById("score-badge").textContent = `Score : ${score}`;
-      document.getElementById("progress-fill").style.width = `${(currentQuestion / quizData.length) * 100}%`;
-      document.getElementById("question-text").textContent = q.question;
-
-      const optionsContainer = document.getElementById("options-container");
-      optionsContainer.innerHTML = "";
-
-      currentOptions.forEach((option, index) => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.innerHTML = `<span class="option-letter">${letters[index]}</span><span>${option.text}</span>`;
-        btn.onclick = () => selectAnswer(index, btn);
-        optionsContainer.appendChild(btn);
-      });
-
-      const feedbackBox = document.getElementById("feedback-box");
-      feedbackBox.style.display = "none";
-      feedbackBox.innerHTML = "";
-
-      const nextBtn = document.getElementById("next-btn");
-      nextBtn.classList.add("hidden");
-      nextBtn.textContent = currentQuestion === quizData.length - 1 ? "Voir mon score" : "Question suivante";
-    }
-
-    function selectAnswer(selectedIndex, selectedBtn) {
-      const q = quizData[currentQuestion];
-      const buttons = document.querySelectorAll(".option-btn");
-      const chosenOption = currentOptions[selectedIndex];
-
-      buttons.forEach((btn, idx) => {
-        btn.disabled = true;
-        if (currentOptions[idx].isCorrect) {
-          btn.classList.add("correct");
+          alert("Erreur réseau : " + err.message);
         }
       });
 
-      const feedbackBox = document.getElementById("feedback-box");
-      if (chosenOption.isCorrect) {
-        score++;
-        document.getElementById("score-badge").textContent = `Score : ${score}`;
-        feedbackBox.innerHTML = `<div class="feedback-header"><span class="status-pill" style="background: var(--accent-vert);"></span>Bonne réponse !</div>${q.explanation}`;
-      } else {
-        selectedBtn.classList.add("wrong");
-        feedbackBox.innerHTML = `<div class="feedback-header"><span class="status-pill" style="background: var(--accent-erreur);"></span>Pas tout à fait…</div>${q.explanation}`;
+      peer.on("connection", (conn) => {
+        conn.on("data", (data) => handleHostMessage(conn, data));
+        conn.on("close", () => {
+          // Libérer la place uniquement si on est encore dans le salon d'attente
+          if (phase === "lobby") {
+            for (const slot in players) {
+              if (players[slot].peerId === conn.peer) {
+                delete players[slot];
+              }
+            }
+            broadcastLobbyState();
+          }
+        });
+      });
+    }
+
+    function copyInviteLink() {
+      const url = `${location.origin}${location.pathname}?room=${roomCode}`;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById("copy-link-btn");
+        btn.textContent = "Lien copié !";
+        setTimeout(() => { btn.textContent = "Copier le lien d'invitation directe"; }, 2500);
+      });
+    }
+
+    function handleHostMessage(conn, data) {
+      if (data.type === "JOIN_REQUEST") {
+        if (phase !== "lobby") {
+          conn.send({ type: "JOIN_ERROR", message: "La partie a déjà commencé." });
+          return;
+        }
+        const slot = Number(data.slot);
+        if (slot < 1 || slot > 6) {
+          conn.send({ type: "JOIN_ERROR", message: "Numéro invalide (1 à 6)." });
+          return;
+        }
+        if (players[slot]) {
+          conn.send({ type: "JOIN_ERROR", message: `Le numéro ${slot} est déjà pris. Choisissez-en un autre.` });
+          return;
+        }
+
+        const cleanName = (data.pseudo || "").trim();
+        const displayName = cleanName ? `#${slot} — ${cleanName}` : `Joueur ${slot}`;
+
+        players[slot] = {
+          slot,
+          name: displayName,
+          score: 0,
+          peerId: conn.peer,
+          currentAnswer: null,
+          lastDelta: 0
+        };
+        connections[conn.peer] = conn;
+
+        conn.send({
+          type: "JOIN_ACCEPTED",
+          slot,
+          name: displayName,
+          players: getPublicPlayersList()
+        });
+
+        broadcastLobbyState();
       }
 
-      feedbackBox.style.display = "block";
-      document.getElementById("progress-fill").style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
-      document.getElementById("next-btn").classList.remove("hidden");
-    }
+      if (data.type === "SUBMIT_ANSWER") {
+        if (phase !== "question") return;
+        const p = players[data.slot];
+        if (!p || p.currentAnswer !== null) return;
 
-    function nextQuestion() {
-      currentQuestion++;
-      if (currentQuestion < quizData.length) {
-        showQuestion();
-      } else {
-        showResults();
+        p.currentAnswer = Number(data.optionIndex);
+        updateHostAnswerProgress();
+
+        // Si tous les participants connectés ont répondu, on révèle immédiatement sans attendre
+        const allPlayers = Object.values(players);
+        const answeredCount = allPlayers.filter(pl => pl.currentAnswer !== null).length;
+        if (answeredCount >= allPlayers.length) {
+          clearInterval(timerInterval);
+          hostRevealAnswer();
+        }
       }
     }
 
-    function showResults() {
-      document.getElementById("quiz-screen").classList.add("hidden");
-      document.getElementById("result-screen").classList.remove("hidden");
-      document.getElementById("final-score").textContent = score;
+    function getPublicPlayersList() {
+      return Object.values(players)
+        .map(p => ({ slot: p.slot, name: p.name, score: p.score, lastDelta: p.lastDelta }))
+        .sort((a, b) => a.slot - b.slot);
+    }
 
-      const title = document.getElementById("result-title");
-      const desc = document.getElementById("result-desc");
+    function broadcast(msg) {
+      Object.values(connections).forEach(conn => {
+        if (conn.open) conn.send(msg);
+      });
+    }
 
-      if (score >= 10) {
-        title.textContent = "Excellent ! Charte 9:16 maîtrisée.";
-        desc.textContent = "Vous connaissez toutes les règles d'habillage, de titrage, de sous-titrage et de montage pour les réseaux sociaux.";
-      } else if (score >= 7) {
-        title.textContent = "Très bon résultat !";
-        desc.textContent = "L'essentiel est acquis. Quelques détails techniques (safe zone, crédits ou synthés) à garder en tête.";
+    function broadcastLobbyState() {
+      const list = getPublicPlayersList();
+      renderPlayersGrid("host-players-grid");
+      document.getElementById("host-count-label").textContent = `${list.length} / 6 participants`;
+
+      const startBtn = document.getElementById("start-game-btn");
+      if (list.length >= 1) {
+        startBtn.disabled = false;
+        startBtn.textContent = `Lancer la partie (${list.length} participant${list.length > 1 ? "s" : ""})`;
       } else {
-        title.textContent = "La formation tombe à pic !";
-        desc.textContent = "Pas d'inquiétude, nous allons pratiquer chacun de ces réglages dans PowerDirector.";
+        startBtn.disabled = true;
+        startBtn.textContent = "En attente d'au moins 1 participant…";
+      }
+
+      broadcast({ type: "LOBBY_UPDATE", players: list });
+    }
+
+    function renderPlayersGrid(containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      for (let i = 1; i <= 6; i++) {
+        const p = players[i];
+        const div = document.createElement("div");
+        div.className = p ? "player-pill" : "player-pill empty";
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;overflow:hidden;">
+            <span class="player-num">${i}</span>
+            <span style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${p ? escapeHtml(p.name) : "Place libre"}
+            </span>
+          </div>
+          <span style="font-size:0.75rem;font-weight:700;color:var(--gris-fonce);">${p ? "Prêt" : "—"}</span>
+        `;
+        container.appendChild(div);
       }
     }
 
-    function restartQuiz() {
-      document.getElementById("result-screen").classList.add("hidden");
-      startQuiz();
+    function hostStartGame() {
+      preparedQuestions = prepareDeck();
+      currentQIndex = 0;
+      Object.values(players).forEach(p => { p.score = 0; p.currentAnswer = null; p.lastDelta = 0; });
+      hostLaunchQuestion();
     }
-  </script>
-</body>
-</html>
+
+    function hostLaunchQuestion() {
+      phase = "question";
+      timeLeft = ROUND_DURATION;
+      Object.values(players).forEach(p => { p.currentAnswer = null; p.lastDelta = 0; });
+
+      const q = preparedQuestions[currentQIndex];
+      const payload = {
+        type: "QUESTION_START",
+        qIndex: currentQIndex,
+        total: preparedQuestions.length,
+        question: q.question,
+        options: q.options.map(o => o.text),
+        duration: ROUND_DURATION
+      };
+
+      broadcast(payload);
+      renderQuestionScreen(payload, true);
+      updateHostAnswerProgress();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI(timeLeft, ROUND_DURATION);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          hostRevealAnswer();
+        }
+      }, 1000);
+    }
+
+    function updateHostAnswerProgress() {
+      const all = Object.values(players);
+      const answered = all.filter(p => p.currentAnswer !== null).length;
+      const info = document.getElementById("host-answers-info");
+      info.classList.remove("hidden");
+      info.textContent = `Réponses reçues : ${answered} / ${all.length}`;
+    }
+
+    function hostRevealAnswer() {
+      phase = "reveal";
+      const q = preparedQuestions[currentQIndex];
+
+      // Attribution des points (+1 si bonne réponse, 0 sinon)
+      Object.values(players).forEach(p => {
+        if (p.currentAnswer === q.correctIndex) {
+          p.score += 1;
+          p.lastDelta = 1;
+        } else {
+          p.lastDelta = 0;
+        }
+      });
+
+      const standings = getRankedPlayers();
+      const payload = {
+        type: "QUESTION_REVEAL",
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+        standings
+      };
+
+      broadcast(payload);
+      renderRevealUI(payload, true);
+    }
+
+    function hostNextStep() {
+      currentQIndex++;
+      if (currentQIndex < preparedQuestions.length) {
+        hostLaunch

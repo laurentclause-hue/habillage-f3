@@ -524,4 +524,1124 @@
       color: var(--blanc);
     }
 
-    /* Explication &
+    /* Explication & Tableau des scores */
+    .feedback {
+      margin-top: 20px;
+      padding: 15px 18px;
+      border-radius: 10px;
+      background: var(--beige-fond);
+      border: 1px solid var(--beige-bordure);
+      border-left: 4px solid var(--accent-violet);
+      font-size: 0.93rem;
+      line-height: 1.5;
+      color: var(--gris-fonce);
+    }
+
+    .feedback-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--noir);
+      margin-bottom: 4px;
+    }
+
+    .status-pill {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .scoreboard {
+      margin-top: 20px;
+      border: 1px solid var(--beige-bordure);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .scoreboard-title {
+      background: var(--beige-fond);
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gris-fonce);
+      border-bottom: 1px solid var(--beige-bordure);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--beige-bordure);
+      background: var(--blanc);
+      font-size: 0.95rem;
+    }
+
+    .score-row:last-child {
+      border-bottom: none;
+    }
+
+    .score-row.leader {
+      background: rgba(71, 226, 110, 0.12);
+    }
+
+    .score-player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--noir);
+    }
+
+    .round-delta {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+
+    .round-delta.plus {
+      background: rgba(71, 226, 110, 0.25);
+      color: var(--noir);
+    }
+
+    .round-delta.zero {
+      background: var(--beige-fond);
+      color: var(--gris-fonce);
+    }
+
+    .score-points {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--noir);
+    }
+
+    .winner-box {
+      text-align: center;
+      background: var(--beige-fond);
+      border: 2px solid var(--accent-vert);
+      border-radius: 14px;
+      padding: 24px 18px;
+      margin: 18px 0 22px 0;
+    }
+
+    .winner-crown {
+      display: inline-block;
+      background: var(--accent-vert);
+      color: var(--noir);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .winner-name {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--noir);
+      margin-bottom: 4px;
+    }
+
+    .winner-score {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gris-fonce);
+    }
+
+    .error-msg {
+      color: var(--accent-erreur);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .status-info {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--gris-fonce);
+      margin-top: 14px;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer-credit {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--beige-bordure);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--gris-fonce);
+    }
+
+    .footer-credit a {
+      color: var(--noir);
+      font-weight: 700;
+    }
+
+    @media (max-width: 560px) {
+      .role-grid, .players-list {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 24px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand-bar">
+    <a href="https://videonline.info" target="_blank" rel="noopener" class="brand-logo">Videonline.info</a>
+    <span class="brand-tag">Quiz Live • 6 Joueurs</span>
+  </div>
+
+  <div class="container">
+    <!-- ÉCRAN 1 : CHOIX DU RÔLE -->
+    <div id="screen-role">
+      <div class="header">
+        <span class="badge"><span class="badge-dot"></span>Charte Réseaux Sociaux 9:16</span>
+        <span>12 Questions • 30s</span>
+      </div>
+      <h1>Quiz multijoueur en direct</h1>
+      <p class="subtitle">
+        Affrontez-vous en temps réel sur les règles du nouvel habillage 9:16. L'animateur crée la salle et jusqu'à 6 participants rejoignent la partie depuis leur smartphone.
+      </p>
+      <div class="role-grid">
+        <button type="button" class="role-card" onclick="initHost()">
+          <span class="badge" style="width:fit-content;"><span class="badge-dot"></span>Écran principal</span>
+          <h2>Créer une partie (Animateur)</h2>
+          <p>Génère un code de salle, affiche les inscrits (1 à 6) et pilote le lancement des questions.</p>
+        </button>
+        <button type="button" class="role-card" onclick="showJoinScreen()">
+          <span class="badge" style="width:fit-content;"><span class="badge-dot" style="background:var(--accent-bleu);"></span>Smartphone</span>
+          <h2>Rejoindre (Participant)</h2>
+          <p>Entrez le code de la salle, choisissez un numéro de 1 à 6 ou un pseudo et répondez en 30 s.</p>
+        </button>
+      </div>
+      <div class="footer-credit">
+        Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
+      </div>
+    </div>
+
+    <!-- ÉCRAN 2A : SALON D'ATTENTE ANIMATEUR -->
+    <div id="screen-host-lobby" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot"></span>Salon Animateur</span>
+        <span id="host-count-label">0 / 6 participants</span>
+      </div>
+      <div class="room-banner">
+        <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;color:var(--gris-fonce);">Code de la salle à partager</div>
+        <div class="room-code-display" id="host-room-code">----</div>
+        <div class="conn-status" id="host-conn-status">Connexion au serveur en cours…</div>
+        <button type="button" class="copy-link-btn" id="copy-link-btn" onclick="copyInviteLink()">Copier le lien d'invitation directe</button>
+      </div>
+      <div class="form-label">Participants connectés (places 1 à 6)</div>
+      <div class="players-list" id="host-players-grid"></div>
+      <button type="button" class="primary-btn" id="start-game-btn" onclick="hostStartGame()" disabled>En attente d'au moins 1 participant…</button>
+      <button type="button" class="secondary-btn" onclick="location.reload()">← Annuler et revenir à l'accueil</button>
+      <div class="footer-credit">
+        Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
+      </div>
+    </div>
+
+    <!-- ÉCRAN 2B : INSCRIPTION PARTICIPANT -->
+    <div id="screen-join" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-bleu);"></span>Inscription</span>
+        <span>Max. 6 joueurs</span>
+      </div>
+      <h1>Rejoindre la partie</h1>
+      <div class="form-group">
+        <label class="form-label" for="join-code-input">Code de la salle (4 lettres)</label>
+        <input type="text" id="join-code-input" class="text-input code-input" maxlength="4" placeholder="EX: ABCD" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Choisissez votre numéro (1 à 6)</label>
+        <div class="slots-grid" id="slots-selector">
+          <button type="button" class="slot-btn selected" data-slot="1" onclick="selectSlot(1)">1</button>
+          <button type="button" class="slot-btn" data-slot="2" onclick="selectSlot(2)">2</button>
+          <button type="button" class="slot-btn" data-slot="3" onclick="selectSlot(3)">3</button>
+          <button type="button" class="slot-btn" data-slot="4" onclick="selectSlot(4)">4</button>
+          <button type="button" class="slot-btn" data-slot="5" onclick="selectSlot(5)">5</button>
+          <button type="button" class="slot-btn" data-slot="6" onclick="selectSlot(6)">6</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="join-pseudo-input">Votre pseudo (optionnel)</label>
+        <input type="text" id="join-pseudo-input" class="text-input" maxlength="18" placeholder="Ex: Marie (sinon « Joueur N° »)" />
+      </div>
+      <div class="error-msg" id="join-error"></div>
+      <button type="button" class="primary-btn" id="join-submit-btn" onclick="joinRoom()">Valider mon inscription</button>
+      <button type="button" class="secondary-btn" onclick="location.reload()">← Retour</button>
+    </div>
+
+    <!-- ÉCRAN 2C : SALLE D'ATTENTE PARTICIPANT -->
+    <div id="screen-player-wait" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-vert);"></span>Inscrit</span>
+        <span id="wait-room-badge">Salle ----</span>
+      </div>
+      <h1 id="wait-player-title">Bienvenue !</h1>
+      <p class="subtitle">
+        Vous êtes bien connecté à la partie. Gardez cet écran ouvert : la première question démarrera dès que l'animateur lancera le quiz.
+      </p>
+      <div class="form-label">Participants dans la salle</div>
+      <div class="players-list" id="player-wait-grid"></div>
+      <div class="status-info">En attente du lancement par l'animateur…</div>
+    </div>
+
+    <!-- ÉCRAN 3 : JEU (QUESTION + COMPTEUR 30S + RÉSULTATS DE MANCHE) -->
+    <div id="screen-game" class="hidden">
+      <div class="header">
+        <span id="game-q-counter">Question 1 / 12</span>
+        <span class="badge" id="game-role-badge"><span class="badge-dot"></span>En direct</span>
+      </div>
+
+      <!-- Barre compteur 30 secondes -->
+      <div class="timer-wrapper" id="timer-box">
+        <div class="timer-top">
+          <span id="timer-label">Temps restant pour répondre</span>
+          <span class="timer-seconds" id="timer-seconds">30 s</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="timer-bar"></div>
+        </div>
+      </div>
+
+      <div class="question-text" id="game-question-text"></div>
+      <div class="options" id="game-options-container"></div>
+
+      <div class="status-info hidden" id="player-answered-info">Réponse enregistrée ! En attente de la fin du chrono…</div>
+      <div class="status-info hidden" id="host-answers-info">0 / 0 réponses reçues</div>
+
+      <!-- Bloc révélation après les 30s -->
+      <div id="reveal-section" class="hidden">
+        <div class="feedback" id="game-feedback-box"></div>
+        <div class="scoreboard">
+          <div class="scoreboard-title">
+            <span>Classement cumulé</span>
+            <span>Points</span>
+          </div>
+          <div id="round-scoreboard-rows"></div>
+        </div>
+        <button type="button" class="primary-btn hidden" id="host-next-btn" onclick="hostNextStep()">Question suivante →</button>
+      </div>
+    </div>
+
+    <!-- ÉCRAN 4 : PODIUM FINAL -->
+    <div id="screen-final" class="hidden">
+      <div class="header">
+        <span class="badge"><span class="badge-dot" style="background:var(--accent-vert);"></span>Partie terminée</span>
+        <span>12 Questions</span>
+      </div>
+      <h1 style="text-align:center;">Classement final</h1>
+      <div class="winner-box">
+        <div class="winner-crown">Vainqueur du quiz</div>
+        <div class="winner-name" id="final-winner-name">—</div>
+        <div class="winner-score" id="final-winner-score">0 point</div>
+      </div>
+      <div class="scoreboard">
+        <div class="scoreboard-title">
+          <span>Podium complet</span>
+          <span>Score final</span>
+        </div>
+        <div id="final-scoreboard-rows"></div>
+      </div>
+      <button type="button" class="primary-btn hidden" id="host-restart-btn" onclick="hostRestartGame()">Rejouer une partie avec les mêmes joueurs</button>
+      <button type="button" class="secondary-btn" onclick="location.href = location.pathname">Quitter et revenir à l'accueil</button>
+      <div class="footer-credit">
+        Support de formation — <a href="https://videonline.info" target="_blank" rel="noopener">Laurent Clause</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. DONNÉES DU QUIZ (12 QUESTIONS — HABILLAGE VIDÉO 9:16)
+       ========================================================================== */
+    const QUIZ_QUESTIONS = [
+      {
+        question: "Quelle est la durée d'affichage et la fonction du nouveau cartouche de titre en début de vidéo 9:16 ?",
+        options: [
+          { text: "Il s'affiche sur les 5 premières secondes et donne la thématique du reportage, comme un titre d'article", isCorrect: true },
+          { text: "Il reste affiché pendant les 15 premières secondes et résume le commentaire mot pour mot", isCorrect: false },
+          { text: "Il s'affiche uniquement à la fin de la vidéo pour conclure le sujet", isCorrect: false }
+        ],
+        explanation: "Fini les 4 grandes lignes qui résument le commentaire : le cartouche s'affiche sur les 5 premières secondes et donne l'angle ou la thématique du reportage."
+      },
+      {
+        question: "Où doit-on placer le cartouche de titre dans le cadre vertical 9:16 ?",
+        options: [
+          { text: "Obligatoirement tout en bas de l'écran, à la place des sous-titres", isCorrect: false },
+          { text: "Son placement est libre en hauteur pour ne pas masquer un élément important, tant qu'il reste dans la safe zone", isCorrect: true },
+          { text: "Toujours collé tout en haut de l'écran, juste à côté du logo", isCorrect: false }
+        ],
+        explanation: "On adapte la hauteur du cartouche selon le cadrage (visage, action) tout en respectant impérativement la safe zone des réseaux sociaux."
+      },
+      {
+        question: "Quelle règle s'applique entre le cartouche de titre et les sous-titres au début de la vidéo ?",
+        options: [
+          { text: "On affiche toujours les sous-titres par-dessus le cartouche de titre", isCorrect: false },
+          { text: "Les sous-titres remplacent le titre dès la 2e seconde", isCorrect: false },
+          { text: "On évite autant que possible d'afficher des sous-titres en même temps que le titre, qui a la priorité", isCorrect: true }
+        ],
+        explanation: "Pour ne pas surcharger l'écran dès l'accroche, le titre a la priorité en début de vidéo."
+      },
+      {
+        question: "Comment sont désormais présentés les sous-titres des interviews dans la nouvelle charte ?",
+        options: [
+          { text: "En italique et en blanc (y compris pour les traductions), avec un tiret pour séparer les intervenants", isCorrect: true },
+          { text: "En jaune pour les traductions et en majuscules pour les intervenants", isCorrect: false },
+          { text: "Dans un encadré noir opaque en haut de l'écran", isCorrect: false }
+        ],
+        explanation: "Les interviews passent en italique pour les distinguer du commentaire (en romain), un tiret sépare les intervenants et tout reste en blanc pour simplifier la lecture."
+      },
+      {
+        question: "De combien la taille des sous-titres a-t-elle été augmentée pour améliorer la lisibilité sur mobile ?",
+        options: [
+          { text: "+ 5 %", isCorrect: false },
+          { text: "+ 40 %", isCorrect: false },
+          { text: "+ 16 % (avec un ombrage revu sans halo noir distrayant)", isCorrect: true }
+        ],
+        explanation: "Le texte est 16 % plus grand et son ombrage a été affiné pour garantir un bon contraste sans créer de halo noir parasite."
+      },
+      {
+        question: "Pourquoi les 5 premières secondes sont-elles jugées décisives sur les réseaux sociaux ?",
+        options: [
+          { text: "Parce que les algorithmes coupent automatiquement le son après 5 secondes", isCorrect: false },
+          { text: "En moyenne, seuls 35 % des internautes regardent encore la vidéo au bout de 5 secondes (et 4 % jusqu'au bout)", isCorrect: true },
+          { text: "Parce que le format 9:16 bascule en 16:9 passé ce délai", isCorrect: false }
+        ],
+        explanation: "Avec 65 % d'abandon dès les 5 premières secondes, il faut démarrer par le moment fort et un plan très visuel (idéalement avec présence humaine)."
+      },
+      {
+        question: "Quelle est la bonne pratique concernant le synthé de localisation (lieu du tournage) ?",
+        options: [
+          { text: "L'afficher dès 0:00 en même temps que le titre, avec le numéro du département (ex. Haguenau 67)", isCorrect: false },
+          { text: "L'afficher après la disparition du titre (par ex. sur un plan large vers 10-15 s) avec le nom du département en toutes lettres", isCorrect: true },
+          { text: "Ne jamais indiquer le département, uniquement le code postal", isCorrect: false }
+        ],
+        explanation: "Le public numérique n'étant pas uniquement local, on écrit le nom complet du département — ex. Haguenau (Bas-Rhin) — et on l'affiche après le titre pour ne pas tout superposer."
+      },
+      {
+        question: "Quelle règle s'applique aux interviews dans un module 9:16 ?",
+        options: [
+          { text: "Les limiter au strict nécessaire, privilégier des passages courts en son « in » et des gens authentiques plutôt que des experts", isCorrect: true },
+          { text: "Placer au moins 3 interviews longues de 30 secondes en « off » sur des plans d'illustration", isCorrect: false },
+          { text: "Conserver toutes les hésitations et respirations pour un effet brut", isCorrect: false }
+        ],
+        explanation: "L'attention chute pendant les interviews : on coupe les temps morts, on privilégie le son « in » et les témoignages authentiques."
+      },
+      {
+        question: "Que faut-il faire avec la musique d'illustration lorsqu'on remonte un sujet télé pour les réseaux sociaux ?",
+        options: [
+          { text: "Monter le volume de la musique de +6 dB pour dynamiser le sujet", isCorrect: false },
+          { text: "Remplacer systématiquement la musique par un jingle d'antenne", isCorrect: false },
+          { text: "Supprimer la musique ajoutée au montage (en utilisant la piste sans musique du MXF), sauf si elle a été captée en direct au tournage", isCorrect: true }
+        ],
+        explanation: "Les réseaux sociaux bloquent automatiquement les vidéos contenant des musiques protégées (et parfois même libres de droits), d'où l'usage de la piste sans musique."
+      },
+      {
+        question: "Dans quel ordre précis les crédits doivent-ils s'afficher à la fin de la vidéo ?",
+        options: [
+          { text: "1. Rédacteur, 2. JRI, 3. Monteur du sujet 16:9 d'origine, 4. Monteur du module 9:16 / CEN", isCorrect: true },
+          { text: "1. Chargé d'édition numérique, 2. Rédacteur en chef, 3. JRI, 4. Rédacteur", isCorrect: false },
+          { text: "Par ordre alphabétique des noms de famille sur une seule ligne", isCorrect: false }
+        ],
+        explanation: "Le rédacteur et le JRI figurent sur la ligne du haut (« Crédits : Prénom Nom, Prénom Nom »), et le(s) monteur(s) / CEN sur la ligne du dessous."
+      },
+      {
+        question: "Pendant combien de temps et sur quel fond s'affichent les crédits en fin de vidéo ?",
+        options: [
+          { text: "Sur un carton noir de 3 secondes ajouté après la dernière image", isCorrect: false },
+          { text: "Sur les 4 dernières secondes, directement sur l'image vidéo (sans ajouter d'écran noir)", isCorrect: true },
+          { text: "Sur un fondu au noir progressif de 5 secondes", isCorrect: false }
+        ],
+        explanation: "On n'ajoute jamais d'écran noir ni de fondu au noir à la fin : les vidéos tournent en boucle sur les réseaux sociaux."
+      },
+      {
+        question: "Que doit faire le logo « .tv » tout au long de la vidéo 9:16 ?",
+        options: [
+          { text: "Disparaître en fondu 2 secondes avant la fin pour laisser place aux crédits", isCorrect: false },
+          { text: "Rester affiché de la première à la dernière image sans jamais disparaître (ni en cut ni en fondu)", isCorrect: true },
+          { text: "N'apparaître que pendant les 5 premières secondes avec le titre", isCorrect: false }
+        ],
+        explanation: "Le logo « .tv » signe l'intégralité du contenu : il ne doit jamais disparaître avant la toute dernière image."
+      }
+    ];
+
+    /* ==========================================================================
+       2. UTILITAIRES DE MÉLANGE ÉQUILIBRÉ (SANS RÉPÉTITION CONSÉCUTIVE)
+       ========================================================================== */
+    const LETTERS = ["A", "B", "C", "D"];
+    const ROUND_DURATION = 30;
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function generateBalancedPositions(totalQuestions, numChoices) {
+      let positions = [];
+      for (let i = 0; i < totalQuestions; i++) positions.push(i % numChoices);
+      let valid = false, attempts = 0;
+      while (!valid && attempts < 100) {
+        positions = shuffleArray(positions);
+        valid = true;
+        for (let i = 1; i < positions.length; i++) {
+          if (positions[i] === positions[i - 1]) { valid = false; break; }
+        }
+        attempts++;
+      }
+      return positions;
+    }
+
+    function prepareDeck() {
+      const positions = generateBalancedPositions(QUIZ_QUESTIONS.length, 3);
+      return QUIZ_QUESTIONS.map((q, idx) => {
+        const targetPos = positions[idx];
+        const correctOpt = q.options.find(o => o.isCorrect);
+        const wrongOpts = shuffleArray(q.options.filter(o => !o.isCorrect));
+        const arranged = [];
+        let w = 0;
+        for (let i = 0; i < q.options.length; i++) {
+          if (i === targetPos) arranged.push({ text: correctOpt.text, isCorrect: true });
+          else arranged.push({ text: wrongOpts[w++].text, isCorrect: false });
+        }
+        return {
+          question: q.question,
+          options: arranged,
+          correctIndex: targetPos,
+          explanation: q.explanation
+        };
+      });
+    }
+
+    /* ==========================================================================
+       3. ÉTAT GLOBAL MULTIJOUEUR (PEERJS)
+       ========================================================================== */
+    let role = null;
+    let peer = null;
+    let roomCode = "";
+    let hostConn = null;
+    let connections = {};
+
+    let players = {};
+    let preparedQuestions = [];
+    let currentQIndex = 0;
+    let phase = "lobby";
+    let timerInterval = null;
+    let timeLeft = ROUND_DURATION;
+
+    let mySlot = 1;
+    let myName = "";
+    let mySelectedOption = null;
+
+    function showScreen(id) {
+      ["screen-role", "screen-host-lobby", "screen-join", "screen-player-wait", "screen-game", "screen-final"].forEach(s => {
+        document.getElementById(s).classList.add("hidden");
+      });
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get("room");
+      if (roomParam) {
+        showJoinScreen();
+        document.getElementById("join-code-input").value = roomParam.toUpperCase().slice(0, 4);
+      }
+    });
+
+    /* ==========================================================================
+       4. LOGIQUE ANIMATEUR (HOST)
+       ========================================================================== */
+    function generateRoomCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+
+    function initHost() {
+      role = "host";
+      roomCode = generateRoomCode();
+      document.getElementById("host-room-code").textContent = roomCode;
+      showScreen("screen-host-lobby");
+      renderPlayersGrid("host-players-grid");
+
+      const statusEl = document.getElementById("host-conn-status");
+      statusEl.className = "conn-status";
+      statusEl.textContent = "Connexion au serveur temps réel en cours…";
+
+      if (typeof Peer === "undefined") {
+        statusEl.className = "conn-status err";
+        statusEl.textContent = "Erreur : la bibliothèque réseau PeerJS est bloquée par votre navigateur ou pare-feu.";
+        return;
+      }
+
+      try {
+        if (peer) peer.destroy();
+        peer = new Peer("videonline-quiz-" + roomCode, { debug: 1 });
+      } catch (e) {
+        statusEl.className = "conn-status err";
+        statusEl.textContent = "Impossible d'initialiser la salle : " + e.message;
+        return;
+      }
+
+      peer.on("open", () => {
+        statusEl.className = "conn-status ok";
+        statusEl.textContent = "Salle active et prête à recevoir jusqu'à 6 participants !";
+      });
+
+      peer.on("error", (err) => {
+        if (err.type === "unavailable-id") {
+          peer.destroy();
+          initHost();
+        } else {
+          statusEl.className = "conn-status err";
+          statusEl.textContent = "Erreur de connexion réseau (" + err.type + "). Vérifiez votre accès Internet.";
+        }
+      });
+
+      peer.on("connection", (conn) => {
+        conn.on("data", (data) => handleHostMessage(conn, data));
+        conn.on("close", () => {
+          if (phase === "lobby") {
+            for (const slot in players) {
+              if (players[slot].peerId === conn.peer) {
+                delete players[slot];
+              }
+            }
+            broadcastLobbyState();
+          }
+        });
+      });
+    }
+
+    function copyInviteLink() {
+      const url = `${location.origin}${location.pathname}?room=${roomCode}`;
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById("copy-link-btn");
+        btn.textContent = "Lien copié !";
+        setTimeout(() => { btn.textContent = "Copier le lien d'invitation directe"; }, 2500);
+      });
+    }
+
+    function handleHostMessage(conn, data) {
+      if (data.type === "JOIN_REQUEST") {
+        if (phase !== "lobby") {
+          conn.send({ type: "JOIN_ERROR", message: "La partie a déjà commencé." });
+          return;
+        }
+        const slot = Number(data.slot);
+        if (slot < 1 || slot > 6) {
+          conn.send({ type: "JOIN_ERROR", message: "Numéro invalide (1 à 6)." });
+          return;
+        }
+        if (players[slot]) {
+          conn.send({ type: "JOIN_ERROR", message: `Le numéro ${slot} est déjà pris. Choisissez-en un autre.` });
+          return;
+        }
+
+        const cleanName = (data.pseudo || "").trim();
+        const displayName = cleanName ? `#${slot} — ${cleanName}` : `Joueur ${slot}`;
+
+        players[slot] = {
+          slot,
+          name: displayName,
+          score: 0,
+          peerId: conn.peer,
+          currentAnswer: null,
+          lastDelta: 0
+        };
+        connections[conn.peer] = conn;
+
+        conn.send({
+          type: "JOIN_ACCEPTED",
+          slot,
+          name: displayName,
+          players: getPublicPlayersList()
+        });
+
+        broadcastLobbyState();
+      }
+
+      if (data.type === "SUBMIT_ANSWER") {
+        if (phase !== "question") return;
+        const p = players[data.slot];
+        if (!p || p.currentAnswer !== null) return;
+
+        p.currentAnswer = Number(data.optionIndex);
+        updateHostAnswerProgress();
+
+        const allPlayers = Object.values(players);
+        const answeredCount = allPlayers.filter(pl => pl.currentAnswer !== null).length;
+        if (answeredCount >= allPlayers.length) {
+          clearInterval(timerInterval);
+          hostRevealAnswer();
+        }
+      }
+    }
+
+    function getPublicPlayersList() {
+      return Object.values(players)
+        .map(p => ({ slot: p.slot, name: p.name, score: p.score, lastDelta: p.lastDelta }))
+        .sort((a, b) => a.slot - b.slot);
+    }
+
+    function broadcast(msg) {
+      Object.values(connections).forEach(conn => {
+        if (conn.open) conn.send(msg);
+      });
+    }
+
+    function broadcastLobbyState() {
+      const list = getPublicPlayersList();
+      renderPlayersGrid("host-players-grid");
+      document.getElementById("host-count-label").textContent = `${list.length} / 6 participants`;
+
+      const startBtn = document.getElementById("start-game-btn");
+      if (list.length >= 1) {
+        startBtn.disabled = false;
+        startBtn.textContent = `Lancer la partie (${list.length} participant${list.length > 1 ? "s" : ""})`;
+      } else {
+        startBtn.disabled = true;
+        startBtn.textContent = "En attente d'au moins 1 participant…";
+      }
+
+      broadcast({ type: "LOBBY_UPDATE", players: list });
+    }
+
+    function renderPlayersGrid(containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      for (let i = 1; i <= 6; i++) {
+        const p = players[i];
+        const div = document.createElement("div");
+        div.className = p ? "player-pill" : "player-pill empty";
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;overflow:hidden;">
+            <span class="player-num">${i}</span>
+            <span style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${p ? escapeHtml(p.name) : "Place libre"}
+            </span>
+          </div>
+          <span style="font-size:0.75rem;font-weight:700;color:var(--gris-fonce);">${p ? "Prêt" : "—"}</span>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function hostStartGame() {
+      preparedQuestions = prepareDeck();
+      currentQIndex = 0;
+      Object.values(players).forEach(p => { p.score = 0; p.currentAnswer = null; p.lastDelta = 0; });
+      hostLaunchQuestion();
+    }
+
+    function hostLaunchQuestion() {
+      phase = "question";
+      timeLeft = ROUND_DURATION;
+      Object.values(players).forEach(p => { p.currentAnswer = null; p.lastDelta = 0; });
+
+      const q = preparedQuestions[currentQIndex];
+      const payload = {
+        type: "QUESTION_START",
+        qIndex: currentQIndex,
+        total: preparedQuestions.length,
+        question: q.question,
+        options: q.options.map(o => o.text),
+        duration: ROUND_DURATION
+      };
+
+      broadcast(payload);
+      renderQuestionScreen(payload, true);
+      updateHostAnswerProgress();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerUI(timeLeft, ROUND_DURATION);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          hostRevealAnswer();
+        }
+      }, 1000);
+    }
+
+    function updateHostAnswerProgress() {
+      const all = Object.values(players);
+      const answered = all.filter(p => p.currentAnswer !== null).length;
+      const info = document.getElementById("host-answers-info");
+      info.classList.remove("hidden");
+      info.textContent = `Réponses reçues : ${answered} / ${all.length}`;
+    }
+
+    function hostRevealAnswer() {
+      phase = "reveal";
+      const q = preparedQuestions[currentQIndex];
+
+      Object.values(players).forEach(p => {
+        if (p.currentAnswer === q.correctIndex) {
+          p.score += 1;
+          p.lastDelta = 1;
+        } else {
+          p.lastDelta = 0;
+        }
+      });
+
+      const standings = getRankedPlayers();
+      const payload = {
+        type: "QUESTION_REVEAL",
+        correctIndex: q.correctIndex,
+        explanation: q.explanation,
+        standings
+      };
+
+      broadcast(payload);
+      renderRevealUI(payload, true);
+    }
+
+    function hostNextStep() {
+      currentQIndex++;
+      if (currentQIndex < preparedQuestions.length) {
+        hostLaunchQuestion();
+      } else {
+        phase = "final";
+        const standings = getRankedPlayers();
+        broadcast({ type: "GAME_OVER", standings });
+        renderFinalScreen(standings, true);
+      }
+    }
+
+    function hostRestartGame() {
+      hostStartGame();
+    }
+
+    function getRankedPlayers() {
+      return Object.values(players)
+        .map(p => ({ slot: p.slot, name: p.name, score: p.score, lastDelta: p.lastDelta }))
+        .sort((a, b) => b.score - a.score || a.slot - b.slot);
+    }
+
+    /* ==========================================================================
+       5. LOGIQUE PARTICIPANT (PLAYER)
+       ========================================================================== */
+    function showJoinScreen() {
+      showScreen("screen-join");
+    }
+
+    function selectSlot(num) {
+      mySlot = num;
+      document.querySelectorAll(".slot-btn").forEach(btn => {
+        btn.classList.toggle("selected", Number(btn.dataset.slot) === num);
+      });
+    }
+
+    function joinRoom() {
+      const code = document.getElementById("join-code-input").value.trim().toUpperCase();
+      const pseudo = document.getElementById("join-pseudo-input").value.trim();
+      const errBox = document.getElementById("join-error");
+      const btn = document.getElementById("join-submit-btn");
+
+      errBox.style.display = "none";
+      if (code.length !== 4) {
+        errBox.textContent = "Veuillez saisir les 4 caractères du code de la salle.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      if (typeof Peer === "undefined") {
+        errBox.textContent = "Erreur réseau : bibliothèque PeerJS non chargée.";
+        errBox.style.display = "block";
+        return;
+      }
+
+      role = "player";
+      roomCode = code;
+      btn.disabled = true;
+      btn.textContent = "Connexion à la salle…";
+
+      if (peer) peer.destroy();
+      peer = new Peer();
+
+      peer.on("open", () => {
+        hostConn = peer.connect("videonline-quiz-" + roomCode);
+
+        const timeout = setTimeout(() => {
+          if (!hostConn.open) {
+            errBox.textContent = "Salle introuvable. Vérifiez le code affiché par l'animateur.";
+            errBox.style.display = "block";
+            btn.disabled = false;
+            btn.textContent = "Valider mon inscription";
+          }
+        }, 6000);
+
+        hostConn.on("open", () => {
+          clearTimeout(timeout);
+          hostConn.send({
+            type: "JOIN_REQUEST",
+            slot: mySlot,
+            pseudo
+          });
+        });
+
+        hostConn.on("data", (data) => handlePlayerMessage(data));
+
+        hostConn.on("close", () => {
+          alert("La connexion avec l'animateur a été interrompue.");
+          location.reload();
+        });
+      });
+
+      peer.on("error", () => {
+        errBox.textContent = "Impossible de joindre cette salle. Vérifiez le code.";
+        errBox.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Valider mon inscription";
+      });
+    }
+
+    function handlePlayerMessage(data) {
+      if (data.type === "JOIN_ERROR") {
+        const errBox = document.getElementById("join-error");
+        const btn = document.getElementById("join-submit-btn");
+        errBox.textContent = data.message;
+        errBox.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Valider mon inscription";
+      }
+
+      if (data.type === "JOIN_ACCEPTED") {
+        mySlot = data.slot;
+        myName = data.name;
+        document.getElementById("wait-room-badge").textContent = `Salle ${roomCode}`;
+        document.getElementById("wait-player-title").textContent = `Bienvenue, ${myName} !`;
+        syncPlayersFromList(data.players);
+        renderPlayersGrid("player-wait-grid");
+        showScreen("screen-player-wait");
+      }
+
+      if (data.type === "LOBBY_UPDATE") {
+        syncPlayersFromList(data.players);
+        renderPlayersGrid("player-wait-grid");
+      }
+
+      if (data.type === "QUESTION_START") {
+        mySelectedOption = null;
+        renderQuestionScreen(data, false);
+        startLocalVisualTimer(data.duration);
+      }
+
+      if (data.type === "QUESTION_REVEAL") {
+        clearInterval(timerInterval);
+        renderRevealUI(data, false);
+      }
+
+      if (data.type === "GAME_OVER") {
+        renderFinalScreen(data.standings, false);
+      }
+    }
+
+    function syncPlayersFromList(list) {
+      players = {};
+      list.forEach(p => { players[p.slot] = p; });
+    }
+
+    function startLocalVisualTimer(duration) {
+      let left = duration;
+      updateTimerUI(left, duration);
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        left--;
+        if (left < 0) left = 0;
+        updateTimerUI(left, duration);
+        if (left <= 0) clearInterval(timerInterval);
+      }, 1000);
+    }
+
+    function playerSelectOption(index, btnElement) {
+      if (role !== "player" || mySelectedOption !== null) return;
+      mySelectedOption = index;
+
+      document.querySelectorAll("#game-options-container .option-btn").forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === index) btn.classList.add("chosen");
+      });
+
+      document.getElementById("player-answered-info").classList.remove("hidden");
+      hostConn.send({
+        type: "SUBMIT_ANSWER",
+        slot: mySlot,
+        optionIndex: index
+      });
+    }
+
+    /* ==========================================================================
+       6. RENDU INTERFACE COMMUN (ANIMATEUR & JOUEURS)
+       ========================================================================== */
+    function renderQuestionScreen(data, isHost) {
+      showScreen("screen-game");
+      document.getElementById("game-q-counter").textContent = `Question ${data.qIndex + 1} / ${data.total}`;
+      document.getElementById("game-role-badge").innerHTML = isHost
+        ? `<span class="badge-dot"></span>Animateur • Salle ${roomCode}`
+        : `<span class="badge-dot" style="background:var(--accent-bleu);"></span>${escapeHtml(myName)}`;
+
+      document.getElementById("timer-label").textContent = "Temps restant pour répondre";
+      updateTimerUI(data.duration, data.duration);
+
+      document.getElementById("game-question-text").textContent = data.question;
+      document.getElementById("reveal-section").classList.add("hidden");
+      document.getElementById("player-answered-info").classList.add("hidden");
+      document.getElementById("host-answers-info").classList.add("hidden");
+
+      const optionsBox = document.getElementById("game-options-container");
+      optionsBox.innerHTML = "";
+
+      data.options.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = `<span class="option-letter">${LETTERS[idx]}</span><span>${escapeHtml(optText)}</span>`;
+        if (isHost) {
+          btn.disabled = true;
+        } else {
+          btn.onclick = () => playerSelectOption(idx, btn);
+        }
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function updateTimerUI(left, total) {
+      const secEl = document.getElementById("timer-seconds");
+      const barEl = document.getElementById("timer-bar");
+      secEl.textContent = `${left} s`;
+      barEl.style.width = `${(left / total) * 100}%`;
+
+      if (left <= 5) {
+        secEl.classList.add("urgent");
+        barEl.classList.add("urgent");
+      } else {
+        secEl.classList.remove("urgent");
+        barEl.classList.remove("urgent");
+      }
+    }
+
+    function renderRevealUI(data, isHost) {
+      document.getElementById("timer-label").textContent = "Temps écoulé !";
+      updateTimerUI(0, ROUND_DURATION);
+      document.getElementById("player-answered-info").classList.add("hidden");
+      document.getElementById("host-answers-info").classList.add("hidden");
+
+      const buttons = document.querySelectorAll("#game-options-container .option-btn");
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        btn.classList.remove("chosen");
+        if (idx === data.correctIndex) {
+          btn.classList.add("correct");
+        } else if (!isHost && mySelectedOption === idx) {
+          btn.classList.add("wrong");
+        }
+      });
+
+      const fb = document.getElementById("game-feedback-box");
+      let statusHtml = `<span class="status-pill" style="background:var(--accent-vert);"></span>Bonne réponse : ${LETTERS[data.correctIndex]}`;
+      if (!isHost) {
+        if (mySelectedOption === data.correctIndex) {
+          statusHtml = `<span class="status-pill" style="background:var(--accent-vert);"></span>Bravo ! +1 point`;
+        } else if (mySelectedOption === null) {
+          statusHtml = `<span class="status-pill" style="background:var(--accent-erreur);"></span>Temps dépassé (0 point)`;
+        } else {
+          statusHtml = `<span class="status-pill" style="background:var(--accent-erreur);"></span>Mauvaise réponse (0 point)`;
+        }
+      }
+
+      fb.style.display = "block";
+      fb.innerHTML = `<div class="feedback-header">${statusHtml}</div>${escapeHtml(data.explanation)}`;
+
+      renderScoreboardRows("round-scoreboard-rows", data.standings, true);
+      document.getElementById("reveal-section").classList.remove("hidden");
+
+      const nextBtn = document.getElementById("host-next-btn");
+      if (isHost) {
+        nextBtn.classList.remove("hidden");
+        nextBtn.textContent = (currentQIndex === preparedQuestions.length - 1)
+          ? "Afficher le podium final →"
+          : "Question suivante →";
+      } else {
+        nextBtn.classList.add("hidden");
+      }
+    }
+
+    function renderScoreboardRows(containerId, standings, showDelta) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const topScore = standings.length > 0 ? standings[0].score : 0;
+
+      standings.forEach((p, idx) => {
+        const row = document.createElement("div");
+        const isLeader = p.score > 0 && p.score === topScore;
+        row.className = isLeader ? "score-row leader" : "score-row";
+
+        const deltaHtml = showDelta
+          ? `<span class="round-delta ${p.lastDelta > 0 ? "plus" : "zero"}">${p.lastDelta > 0 ? "+1 pt" : "0 pt"}</span>`
+          : "";
+
+        row.innerHTML = `
+          <div class="score-player-info">
+            <span class="player-num" style="margin-right:0;">${idx + 1}</span>
+            <span>${escapeHtml(p.name)}</span>
+            ${deltaHtml}
+          </div>
+          <div class="score-points">${p.score} pt${p.score > 1 ? "s" : ""}</div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderFinalScreen(standings, isHost) {
+      showScreen("screen-final");
+      if (standings.length > 0) {
+        const bestScore = standings[0].score;
+        const winners = standings.filter(p => p.score === bestScore);
+        const winnerTitle = winners.map(w => w.name).join(" & ");
+        document.getElementById("final-winner-name").textContent = winnerTitle;
+        document.getElementById("final-winner-score").textContent = `${bestScore} point${bestScore > 1 ? "s" : ""} sur ${QUIZ_QUESTIONS.length}`;
+      }
+
+      renderScoreboardRows("final-scoreboard-rows", standings, false);
+
+      const restartBtn = document.getElementById("host-restart-btn");
+      if (isHost) restartBtn.classList.remove("hidden");
+      else restartBtn.classList.add("hidden");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

@@ -4,29 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz Live Multi-joueurs — Habillage 9:16 | Videonline.info</title>
-  <!-- Typographies officielles : Open Sans (300, 400, 700, 800 - sans 600) & Oswald (700) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,300;1,400&family=Oswald:wght@700&display=swap" rel="stylesheet">
-  <!-- Double CDN pour PeerJS afin d'éviter tout blocage réseau -->
-  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
-  <script>
-    if (typeof Peer === "undefined") {
-      document.write('<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"><\/script>');
-    }
-  </script>
+  <!-- SDK Firebase (App + Realtime Database) via HTTPS standard -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <style>
     :root {
-      /* Couleurs principales */
       --noir: #212121;
       --blanc: #FFFFFF;
-
-      /* Couleurs secondaires */
       --gris-fonce: #504f4c;
       --beige-bordure: #dbd6c6;
       --beige-fond: #f4f2ec;
-
-      /* Couleurs d'accentuation */
       --accent-vert: #47e26e;
       --accent-bleu: #478ce2;
       --accent-violet: #756b96;
@@ -140,7 +130,6 @@
       font-size: 0.96rem;
     }
 
-    /* Boutons */
     .primary-btn {
       margin-top: 16px;
       width: 100%;
@@ -155,14 +144,8 @@
       transition: opacity 0.2s ease, transform 0.1s ease;
     }
 
-    .primary-btn:hover:not(:disabled) {
-      opacity: 0.92;
-    }
-
-    .primary-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    .primary-btn:hover:not(:disabled) { opacity: 0.92; }
+    .primary-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .secondary-btn {
       margin-top: 12px;
@@ -178,9 +161,7 @@
       transition: background 0.2s ease;
     }
 
-    .secondary-btn:hover {
-      background: var(--beige-bordure);
-    }
+    .secondary-btn:hover { background: var(--beige-bordure); }
 
     .role-grid {
       display: grid;
@@ -219,10 +200,7 @@
       line-height: 1.45;
     }
 
-    /* Formulaire joueur */
-    .form-group {
-      margin-bottom: 18px;
-    }
+    .form-group { margin-bottom: 18px; }
 
     .form-label {
       display: block;
@@ -257,7 +235,6 @@
       text-align: center;
     }
 
-    /* Sélecteur de numéro 1 à 6 */
     .slots-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -276,23 +253,13 @@
       transition: all 0.15s ease;
     }
 
-    .slot-btn:hover:not(:disabled) {
-      border-color: var(--accent-violet);
-    }
-
+    .slot-btn:hover:not(:disabled) { border-color: var(--accent-violet); }
     .slot-btn.selected {
       background: var(--accent-violet);
       border-color: var(--accent-violet);
       color: var(--blanc);
     }
 
-    .slot-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      text-decoration: line-through;
-    }
-
-    /* Code de salle animateur */
     .room-banner {
       background: var(--beige-fond);
       border: 1.5px dashed var(--beige-bordure);
@@ -318,13 +285,8 @@
       color: var(--gris-fonce);
     }
 
-    .conn-status.ok {
-      color: #1e8e3e;
-    }
-
-    .conn-status.err {
-      color: var(--accent-erreur);
-    }
+    .conn-status.ok { color: #1e8e3e; }
+    .conn-status.err { color: var(--accent-erreur); }
 
     .copy-link-btn {
       margin-top: 6px;
@@ -338,11 +300,8 @@
       cursor: pointer;
     }
 
-    .copy-link-btn:hover {
-      background: var(--beige-bordure);
-    }
+    .copy-link-btn:hover { background: var(--beige-bordure); }
 
-    /* Liste des joueurs */
     .players-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -386,10 +345,7 @@
       color: var(--gris-fonce);
     }
 
-    /* Compteur 30s */
-    .timer-wrapper {
-      margin-bottom: 22px;
-    }
+    .timer-wrapper { margin-bottom: 22px; }
 
     .timer-top {
       display: flex;
@@ -407,9 +363,7 @@
       color: var(--noir);
     }
 
-    .timer-seconds.urgent {
-      color: var(--accent-erreur);
-    }
+    .timer-seconds.urgent { color: var(--accent-erreur); }
 
     .progress-bar {
       width: 100%;
@@ -427,11 +381,8 @@
       transition: width 0.25s linear, background-color 0.25s ease;
     }
 
-    .progress-fill.urgent {
-      background: var(--accent-erreur);
-    }
+    .progress-fill.urgent { background: var(--accent-erreur); }
 
-    /* Question & options */
     .question-text {
       font-size: 1.2rem;
       font-weight: 700;
@@ -469,9 +420,7 @@
       color: var(--noir);
     }
 
-    .option-btn:disabled {
-      cursor: default;
-    }
+    .option-btn:disabled { cursor: default; }
 
     .option-btn.chosen {
       border-color: var(--accent-bleu);
@@ -524,7 +473,6 @@
       color: var(--blanc);
     }
 
-    /* Explication & Tableau des scores */
     .feedback {
       margin-top: 20px;
       padding: 15px 18px;
@@ -585,13 +533,8 @@
       font-size: 0.95rem;
     }
 
-    .score-row:last-child {
-      border-bottom: none;
-    }
-
-    .score-row.leader {
-      background: rgba(71, 226, 110, 0.12);
-    }
+    .score-row:last-child { border-bottom: none; }
+    .score-row.leader { background: rgba(71, 226, 110, 0.12); }
 
     .score-player-info {
       display: flex;
@@ -609,15 +552,8 @@
       margin-left: 8px;
     }
 
-    .round-delta.plus {
-      background: rgba(71, 226, 110, 0.25);
-      color: var(--noir);
-    }
-
-    .round-delta.zero {
-      background: var(--beige-fond);
-      color: var(--gris-fonce);
-    }
+    .round-delta.plus { background: rgba(71, 226, 110, 0.25); color: var(--noir); }
+    .round-delta.zero { background: var(--beige-fond); color: var(--gris-fonce); }
 
     .score-points {
       font-weight: 800;
@@ -676,9 +612,7 @@
       font-weight: 700;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     .footer-credit {
       margin-top: 24px;
@@ -689,18 +623,11 @@
       color: var(--gris-fonce);
     }
 
-    .footer-credit a {
-      color: var(--noir);
-      font-weight: 700;
-    }
+    .footer-credit a { color: var(--noir); font-weight: 700; }
 
     @media (max-width: 560px) {
-      .role-grid, .players-list {
-        grid-template-columns: 1fr;
-      }
-      .container {
-        padding: 24px 18px;
-      }
+      .role-grid, .players-list { grid-template-columns: 1fr; }
+      .container { padding: 24px 18px; }
     }
   </style>
 </head>
@@ -747,7 +674,7 @@
       <div class="room-banner">
         <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;color:var(--gris-fonce);">Code de la salle à partager</div>
         <div class="room-code-display" id="host-room-code">----</div>
-        <div class="conn-status" id="host-conn-status">Connexion au serveur en cours…</div>
+        <div class="conn-status" id="host-conn-status">Initialisation de la salle…</div>
         <button type="button" class="copy-link-btn" id="copy-link-btn" onclick="copyInviteLink()">Copier le lien d'invitation directe</button>
       </div>
       <div class="form-label">Participants connectés (places 1 à 6)</div>
@@ -805,14 +732,13 @@
       <div class="status-info">En attente du lancement par l'animateur…</div>
     </div>
 
-    <!-- ÉCRAN 3 : JEU (QUESTION + COMPTEUR 30S + RÉSULTATS DE MANCHE) -->
+    <!-- ÉCRAN 3 : JEU -->
     <div id="screen-game" class="hidden">
       <div class="header">
         <span id="game-q-counter">Question 1 / 12</span>
         <span class="badge" id="game-role-badge"><span class="badge-dot"></span>En direct</span>
       </div>
 
-      <!-- Barre compteur 30 secondes -->
       <div class="timer-wrapper" id="timer-box">
         <div class="timer-top">
           <span id="timer-label">Temps restant pour répondre</span>
@@ -829,7 +755,6 @@
       <div class="status-info hidden" id="player-answered-info">Réponse enregistrée ! En attente de la fin du chrono…</div>
       <div class="status-info hidden" id="host-answers-info">0 / 0 réponses reçues</div>
 
-      <!-- Bloc révélation après les 30s -->
       <div id="reveal-section" class="hidden">
         <div class="feedback" id="game-feedback-box"></div>
         <div class="scoreboard">
@@ -871,6 +796,14 @@
   </div>
 
   <script>
+    /* ==========================================================================
+       0. CONFIGURATION FIREBASE (REMPLACE PAR TON URL REALTIME DATABASE)
+       ========================================================================== */
+    const FIREBASE_DB_URL = "https://quiza6-9f82a-default-rtdb.europe-west1.firebasedatabase.app";
+
+    firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
+    const db = firebase.database();
+
     /* ==========================================================================
        1. DONNÉES DU QUIZ (12 QUESTIONS — HABILLAGE VIDÉO 9:16)
        ========================================================================== */
@@ -986,7 +919,7 @@
     ];
 
     /* ==========================================================================
-       2. UTILITAIRES DE MÉLANGE ÉQUILIBRÉ (SANS RÉPÉTITION CONSÉCUTIVE)
+       2. MÉLANGE ÉQUILIBRÉ
        ========================================================================== */
     const LETTERS = ["A", "B", "C", "D"];
     const ROUND_DURATION = 30;
@@ -1029,7 +962,7 @@
         }
         return {
           question: q.question,
-          options: arranged,
+          options: arranged.map(o => o.text),
           correctIndex: targetPos,
           explanation: q.explanation
         };
@@ -1037,13 +970,11 @@
     }
 
     /* ==========================================================================
-       3. ÉTAT GLOBAL MULTIJOUEUR (PEERJS)
+       3. ÉTAT GLOBAL SYNCHRONISÉ PAR FIREBASE
        ========================================================================== */
-    let role = null;
-    let peer = null;
+    let role = null; // 'host' ou 'player'
     let roomCode = "";
-    let hostConn = null;
-    let connections = {};
+    let roomRef = null;
 
     let players = {};
     let preparedQuestions = [];
@@ -1051,6 +982,7 @@
     let phase = "lobby";
     let timerInterval = null;
     let timeLeft = ROUND_DURATION;
+    let lastRenderedPhaseKey = "";
 
     let mySlot = 1;
     let myName = "";
@@ -1082,60 +1014,67 @@
       return code;
     }
 
-    function initHost() {
+    async function initHost() {
       role = "host";
       roomCode = generateRoomCode();
       document.getElementById("host-room-code").textContent = roomCode;
       showScreen("screen-host-lobby");
-      renderPlayersGrid("host-players-grid");
+      renderPlayersGrid("host-players-grid", {});
 
       const statusEl = document.getElementById("host-conn-status");
       statusEl.className = "conn-status";
-      statusEl.textContent = "Connexion au serveur temps réel en cours…";
-
-      if (typeof Peer === "undefined") {
-        statusEl.className = "conn-status err";
-        statusEl.textContent = "Erreur : la bibliothèque réseau PeerJS est bloquée par votre navigateur ou pare-feu.";
-        return;
-      }
+      statusEl.textContent = "Création de la salle sur le serveur…";
 
       try {
-        if (peer) peer.destroy();
-        peer = new Peer("videonline-quiz-" + roomCode, { debug: 1 });
-      } catch (e) {
-        statusEl.className = "conn-status err";
-        statusEl.textContent = "Impossible d'initialiser la salle : " + e.message;
-        return;
-      }
+        roomRef = db.ref("rooms/" + roomCode);
+        await roomRef.set({
+          phase: "lobby",
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          players: {},
+          answers: {}
+        });
 
-      peer.on("open", () => {
         statusEl.className = "conn-status ok";
-        statusEl.textContent = "Salle active et prête à recevoir jusqu'à 6 participants !";
-      });
+        statusEl.textContent = "Salle active (HTTPS) — 100 % compatible Wi-Fi & 4G/5G !";
 
-      peer.on("error", (err) => {
-        if (err.type === "unavailable-id") {
-          peer.destroy();
-          initHost();
-        } else {
-          statusEl.className = "conn-status err";
-          statusEl.textContent = "Erreur de connexion réseau (" + err.type + "). Vérifiez votre accès Internet.";
-        }
-      });
+        // Écoute en direct des joueurs qui rejoignent
+        roomRef.child("players").on("value", (snap) => {
+          players = snap.val() || {};
+          renderPlayersGrid("host-players-grid", players);
+          const count = Object.keys(players).length;
+          document.getElementById("host-count-label").textContent = `${count} / 6 participants`;
 
-      peer.on("connection", (conn) => {
-        conn.on("data", (data) => handleHostMessage(conn, data));
-        conn.on("close", () => {
-          if (phase === "lobby") {
-            for (const slot in players) {
-              if (players[slot].peerId === conn.peer) {
-                delete players[slot];
-              }
-            }
-            broadcastLobbyState();
+          const startBtn = document.getElementById("start-game-btn");
+          if (count >= 1) {
+            startBtn.disabled = false;
+            startBtn.textContent = `Lancer la partie (${count} participant${count > 1 ? "s" : ""})`;
+          } else {
+            startBtn.disabled = true;
+            startBtn.textContent = "En attente d'au moins 1 participant…";
           }
         });
-      });
+
+        // Écoute des réponses pendant une question
+        roomRef.child("answers").on("value", (snap) => {
+          if (phase !== "question") return;
+          const answers = snap.val() || {};
+          const totalPlayers = Object.keys(players).length;
+          const answeredCount = Object.keys(answers).length;
+
+          const info = document.getElementById("host-answers-info");
+          info.classList.remove("hidden");
+          info.textContent = `Réponses reçues : ${answeredCount} / ${totalPlayers}`;
+
+          if (totalPlayers > 0 && answeredCount >= totalPlayers) {
+            clearInterval(timerInterval);
+            hostRevealAnswer(answers);
+          }
+        });
+
+      } catch (err) {
+        statusEl.className = "conn-status err";
+        statusEl.textContent = "Erreur Firebase : vérifie l'URL FIREBASE_DB_URL et le mode test.";
+      }
     }
 
     function copyInviteLink() {
@@ -1147,189 +1086,100 @@
       });
     }
 
-    function handleHostMessage(conn, data) {
-      if (data.type === "JOIN_REQUEST") {
-        if (phase !== "lobby") {
-          conn.send({ type: "JOIN_ERROR", message: "La partie a déjà commencé." });
-          return;
-        }
-        const slot = Number(data.slot);
-        if (slot < 1 || slot > 6) {
-          conn.send({ type: "JOIN_ERROR", message: "Numéro invalide (1 à 6)." });
-          return;
-        }
-        if (players[slot]) {
-          conn.send({ type: "JOIN_ERROR", message: `Le numéro ${slot} est déjà pris. Choisissez-en un autre.` });
-          return;
-        }
-
-        const cleanName = (data.pseudo || "").trim();
-        const displayName = cleanName ? `#${slot} — ${cleanName}` : `Joueur ${slot}`;
-
-        players[slot] = {
-          slot,
-          name: displayName,
-          score: 0,
-          peerId: conn.peer,
-          currentAnswer: null,
-          lastDelta: 0
-        };
-        connections[conn.peer] = conn;
-
-        conn.send({
-          type: "JOIN_ACCEPTED",
-          slot,
-          name: displayName,
-          players: getPublicPlayersList()
-        });
-
-        broadcastLobbyState();
-      }
-
-      if (data.type === "SUBMIT_ANSWER") {
-        if (phase !== "question") return;
-        const p = players[data.slot];
-        if (!p || p.currentAnswer !== null) return;
-
-        p.currentAnswer = Number(data.optionIndex);
-        updateHostAnswerProgress();
-
-        const allPlayers = Object.values(players);
-        const answeredCount = allPlayers.filter(pl => pl.currentAnswer !== null).length;
-        if (answeredCount >= allPlayers.length) {
-          clearInterval(timerInterval);
-          hostRevealAnswer();
-        }
-      }
-    }
-
-    function getPublicPlayersList() {
-      return Object.values(players)
-        .map(p => ({ slot: p.slot, name: p.name, score: p.score, lastDelta: p.lastDelta }))
-        .sort((a, b) => a.slot - b.slot);
-    }
-
-    function broadcast(msg) {
-      Object.values(connections).forEach(conn => {
-        if (conn.open) conn.send(msg);
-      });
-    }
-
-    function broadcastLobbyState() {
-      const list = getPublicPlayersList();
-      renderPlayersGrid("host-players-grid");
-      document.getElementById("host-count-label").textContent = `${list.length} / 6 participants`;
-
-      const startBtn = document.getElementById("start-game-btn");
-      if (list.length >= 1) {
-        startBtn.disabled = false;
-        startBtn.textContent = `Lancer la partie (${list.length} participant${list.length > 1 ? "s" : ""})`;
-      } else {
-        startBtn.disabled = true;
-        startBtn.textContent = "En attente d'au moins 1 participant…";
-      }
-
-      broadcast({ type: "LOBBY_UPDATE", players: list });
-    }
-
-    function renderPlayersGrid(containerId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-      for (let i = 1; i <= 6; i++) {
-        const p = players[i];
-        const div = document.createElement("div");
-        div.className = p ? "player-pill" : "player-pill empty";
-        div.innerHTML = `
-          <div style="display:flex;align-items:center;overflow:hidden;">
-            <span class="player-num">${i}</span>
-            <span style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              ${p ? escapeHtml(p.name) : "Place libre"}
-            </span>
-          </div>
-          <span style="font-size:0.75rem;font-weight:700;color:var(--gris-fonce);">${p ? "Prêt" : "—"}</span>
-        `;
-        container.appendChild(div);
-      }
-    }
-
-    function hostStartGame() {
+    async function hostStartGame() {
       preparedQuestions = prepareDeck();
       currentQIndex = 0;
-      Object.values(players).forEach(p => { p.score = 0; p.currentAnswer = null; p.lastDelta = 0; });
+
+      // Remise à zéro des scores
+      const updates = {};
+      Object.keys(players).forEach(slot => {
+        updates[`players/${slot}/score`] = 0;
+        updates[`players/${slot}/lastDelta`] = 0;
+      });
+      await roomRef.update(updates);
       hostLaunchQuestion();
     }
 
-    function hostLaunchQuestion() {
+    async function hostLaunchQuestion() {
       phase = "question";
       timeLeft = ROUND_DURATION;
-      Object.values(players).forEach(p => { p.currentAnswer = null; p.lastDelta = 0; });
-
       const q = preparedQuestions[currentQIndex];
-      const payload = {
-        type: "QUESTION_START",
+
+      const questionState = {
         qIndex: currentQIndex,
         total: preparedQuestions.length,
         question: q.question,
-        options: q.options.map(o => o.text),
+        options: q.options,
         duration: ROUND_DURATION
       };
 
-      broadcast(payload);
-      renderQuestionScreen(payload, true);
-      updateHostAnswerProgress();
+      await roomRef.update({
+        phase: "question",
+        currentQuestion: questionState,
+        answers: null,
+        reveal: null
+      });
+
+      renderQuestionScreen(questionState, true);
+      const info = document.getElementById("host-answers-info");
+      info.classList.remove("hidden");
+      info.textContent = `Réponses reçues : 0 / ${Object.keys(players).length}`;
 
       clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
+      timerInterval = setInterval(async () => {
         timeLeft--;
         updateTimerUI(timeLeft, ROUND_DURATION);
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          hostRevealAnswer();
+          const snap = await roomRef.child("answers").get();
+          hostRevealAnswer(snap.val() || {});
         }
       }, 1000);
     }
 
-    function updateHostAnswerProgress() {
-      const all = Object.values(players);
-      const answered = all.filter(p => p.currentAnswer !== null).length;
-      const info = document.getElementById("host-answers-info");
-      info.classList.remove("hidden");
-      info.textContent = `Réponses reçues : ${answered} / ${all.length}`;
-    }
-
-    function hostRevealAnswer() {
+    async function hostRevealAnswer(answers) {
+      if (phase === "reveal") return;
       phase = "reveal";
       const q = preparedQuestions[currentQIndex];
 
-      Object.values(players).forEach(p => {
-        if (p.currentAnswer === q.correctIndex) {
-          p.score += 1;
-          p.lastDelta = 1;
-        } else {
-          p.lastDelta = 0;
-        }
+      const updates = {};
+      Object.keys(players).forEach(slot => {
+        const ans = answers[slot];
+        const isRight = (ans !== undefined && Number(ans) === q.correctIndex);
+        const newScore = (players[slot].score || 0) + (isRight ? 1 : 0);
+        const delta = isRight ? 1 : 0;
+
+        players[slot].score = newScore;
+        players[slot].lastDelta = delta;
+        updates[`players/${slot}/score`] = newScore;
+        updates[`players/${slot}/lastDelta`] = delta;
       });
 
-      const standings = getRankedPlayers();
-      const payload = {
-        type: "QUESTION_REVEAL",
+      const standings = getRankedPlayers(players);
+      const revealPayload = {
         correctIndex: q.correctIndex,
         explanation: q.explanation,
         standings
       };
 
-      broadcast(payload);
-      renderRevealUI(payload, true);
+      updates["phase"] = "reveal";
+      updates["reveal"] = revealPayload;
+      await roomRef.update(updates);
+
+      renderRevealUI(revealPayload, true);
     }
 
-    function hostNextStep() {
+    async function hostNextStep() {
       currentQIndex++;
       if (currentQIndex < preparedQuestions.length) {
         hostLaunchQuestion();
       } else {
         phase = "final";
-        const standings = getRankedPlayers();
-        broadcast({ type: "GAME_OVER", standings });
+        const standings = getRankedPlayers(players);
+        await roomRef.update({
+          phase: "final",
+          finalStandings: standings
+        });
         renderFinalScreen(standings, true);
       }
     }
@@ -1338,9 +1188,9 @@
       hostStartGame();
     }
 
-    function getRankedPlayers() {
-      return Object.values(players)
-        .map(p => ({ slot: p.slot, name: p.name, score: p.score, lastDelta: p.lastDelta }))
+    function getRankedPlayers(playersObj) {
+      return Object.values(playersObj)
+        .map(p => ({ slot: p.slot, name: p.name, score: p.score || 0, lastDelta: p.lastDelta || 0 }))
         .sort((a, b) => b.score - a.score || a.slot - b.slot);
     }
 
@@ -1358,7 +1208,7 @@
       });
     }
 
-    function joinRoom() {
+    async function joinRoom() {
       const code = document.getElementById("join-code-input").value.trim().toUpperCase();
       const pseudo = document.getElementById("join-pseudo-input").value.trim();
       const errBox = document.getElementById("join-error");
@@ -1371,101 +1221,104 @@
         return;
       }
 
-      if (typeof Peer === "undefined") {
-        errBox.textContent = "Erreur réseau : bibliothèque PeerJS non chargée.";
-        errBox.style.display = "block";
-        return;
-      }
-
       role = "player";
       roomCode = code;
       btn.disabled = true;
-      btn.textContent = "Connexion à la salle…";
+      btn.textContent = "Connexion en cours…";
 
-      if (peer) peer.destroy();
-      peer = new Peer();
+      try {
+        roomRef = db.ref("rooms/" + roomCode);
+        const snap = await roomRef.get();
 
-      peer.on("open", () => {
-        hostConn = peer.connect("videonline-quiz-" + roomCode);
+        if (!snap.exists()) {
+          errBox.textContent = "Salle introuvable. Vérifiez le code affiché par l'animateur.";
+          errBox.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Valider mon inscription";
+          return;
+        }
 
-        const timeout = setTimeout(() => {
-          if (!hostConn.open) {
-            errBox.textContent = "Salle introuvable. Vérifiez le code affiché par l'animateur.";
-            errBox.style.display = "block";
-            btn.disabled = false;
-            btn.textContent = "Valider mon inscription";
-          }
-        }, 6000);
+        const roomData = snap.val();
+        if (roomData.phase !== "lobby") {
+          errBox.textContent = "La partie a déjà démarré.";
+          errBox.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Valider mon inscription";
+          return;
+        }
 
-        hostConn.on("open", () => {
-          clearTimeout(timeout);
-          hostConn.send({
-            type: "JOIN_REQUEST",
+        // Réservation atomique du numéro (1 à 6) via transaction Firebase
+        const displayName = pseudo ? `#${mySlot} — ${pseudo}` : `Joueur ${mySlot}`;
+        const slotRef = roomRef.child("players/" + mySlot);
+
+        const tx = await slotRef.transaction((currentVal) => {
+          if (currentVal !== null) return; // Déjà pris -> annule la transaction
+          return {
             slot: mySlot,
-            pseudo
-          });
+            name: displayName,
+            score: 0,
+            lastDelta: 0
+          };
         });
 
-        hostConn.on("data", (data) => handlePlayerMessage(data));
+        if (!tx.committed) {
+          errBox.textContent = `Le numéro ${mySlot} vient d'être pris. Choisissez-en un autre.`;
+          errBox.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Valider mon inscription";
+          return;
+        }
 
-        hostConn.on("close", () => {
-          alert("La connexion avec l'animateur a été interrompue.");
-          location.reload();
-        });
-      });
-
-      peer.on("error", () => {
-        errBox.textContent = "Impossible de joindre cette salle. Vérifiez le code.";
-        errBox.style.display = "block";
-        btn.disabled = false;
-        btn.textContent = "Valider mon inscription";
-      });
-    }
-
-    function handlePlayerMessage(data) {
-      if (data.type === "JOIN_ERROR") {
-        const errBox = document.getElementById("join-error");
-        const btn = document.getElementById("join-submit-btn");
-        errBox.textContent = data.message;
-        errBox.style.display = "block";
-        btn.disabled = false;
-        btn.textContent = "Valider mon inscription";
-      }
-
-      if (data.type === "JOIN_ACCEPTED") {
-        mySlot = data.slot;
-        myName = data.name;
+        myName = displayName;
         document.getElementById("wait-room-badge").textContent = `Salle ${roomCode}`;
         document.getElementById("wait-player-title").textContent = `Bienvenue, ${myName} !`;
-        syncPlayersFromList(data.players);
-        renderPlayersGrid("player-wait-grid");
         showScreen("screen-player-wait");
-      }
 
-      if (data.type === "LOBBY_UPDATE") {
-        syncPlayersFromList(data.players);
-        renderPlayersGrid("player-wait-grid");
-      }
+        // Écoute globale de l'état de la salle
+        roomRef.on("value", (roomSnap) => {
+          const state = roomSnap.val();
+          if (!state) return;
 
-      if (data.type === "QUESTION_START") {
-        mySelectedOption = null;
-        renderQuestionScreen(data, false);
-        startLocalVisualTimer(data.duration);
-      }
+          players = state.players || {};
 
-      if (data.type === "QUESTION_REVEAL") {
-        clearInterval(timerInterval);
-        renderRevealUI(data, false);
-      }
+          if (state.phase === "lobby") {
+            renderPlayersGrid("player-wait-grid", players);
+          }
 
-      if (data.type === "GAME_OVER") {
-        renderFinalScreen(data.standings, false);
-      }
-    }
+          if (state.phase === "question" && state.currentQuestion) {
+            const key = "q_" + state.currentQuestion.qIndex;
+            if (lastRenderedPhaseKey !== key) {
+              lastRenderedPhaseKey = key;
+              mySelectedOption = null;
+              renderQuestionScreen(state.currentQuestion, false);
+              startLocalVisualTimer(state.currentQuestion.duration);
+            }
+          }
 
-    function syncPlayersFromList(list) {
-      players = {};
-      list.forEach(p => { players[p.slot] = p; });
+          if (state.phase === "reveal" && state.reveal) {
+            const key = "rev_" + (state.currentQuestion ? state.currentQuestion.qIndex : "");
+            if (lastRenderedPhaseKey !== key) {
+              lastRenderedPhaseKey = key;
+              clearInterval(timerInterval);
+              renderRevealUI(state.reveal, false);
+            }
+          }
+
+          if (state.phase === "final" && state.finalStandings) {
+            if (lastRenderedPhaseKey !== "final") {
+              lastRenderedPhaseKey = "final";
+              clearInterval(timerInterval);
+              renderFinalScreen(state.finalStandings, false);
+            }
+          }
+        });
+
+      } catch (err) {
+        errBox.textContent = "Erreur de connexion au serveur : " + err.message;
+        errBox.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Valider mon inscription";
+      }
     }
 
     function startLocalVisualTimer(duration) {
@@ -1480,7 +1333,7 @@
       }, 1000);
     }
 
-    function playerSelectOption(index, btnElement) {
+    async function playerSelectOption(index) {
       if (role !== "player" || mySelectedOption !== null) return;
       mySelectedOption = index;
 
@@ -1490,16 +1343,32 @@
       });
 
       document.getElementById("player-answered-info").classList.remove("hidden");
-      hostConn.send({
-        type: "SUBMIT_ANSWER",
-        slot: mySlot,
-        optionIndex: index
-      });
+      await roomRef.child("answers/" + mySlot).set(index);
     }
 
     /* ==========================================================================
-       6. RENDU INTERFACE COMMUN (ANIMATEUR & JOUEURS)
+       6. RENDU INTERFACE COMMUN
        ========================================================================== */
+    function renderPlayersGrid(containerId, playersObj) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      for (let i = 1; i <= 6; i++) {
+        const p = playersObj[i];
+        const div = document.createElement("div");
+        div.className = p ? "player-pill" : "player-pill empty";
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;overflow:hidden;">
+            <span class="player-num">${i}</span>
+            <span style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${p ? escapeHtml(p.name) : "Place libre"}
+            </span>
+          </div>
+          <span style="font-size:0.75rem;font-weight:700;color:var(--gris-fonce);">${p ? "Prêt" : "—"}</span>
+        `;
+        container.appendChild(div);
+      }
+    }
+
     function renderQuestionScreen(data, isHost) {
       showScreen("screen-game");
       document.getElementById("game-q-counter").textContent = `Question ${data.qIndex + 1} / ${data.total}`;
@@ -1525,7 +1394,7 @@
         if (isHost) {
           btn.disabled = true;
         } else {
-          btn.onclick = () => playerSelectOption(idx, btn);
+          btn.onclick = () => playerSelectOption(idx);
         }
         optionsBox.appendChild(btn);
       });
@@ -1578,7 +1447,7 @@
       fb.style.display = "block";
       fb.innerHTML = `<div class="feedback-header">${statusHtml}</div>${escapeHtml(data.explanation)}`;
 
-      renderScoreboardRows("round-scoreboard-rows", data.standings, true);
+      renderScoreboardRows("round-scoreboard-rows", data.standings || [], true);
       document.getElementById("reveal-section").classList.remove("hidden");
 
       const nextBtn = document.getElementById("host-next-btn");
